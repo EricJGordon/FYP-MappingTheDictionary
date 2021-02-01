@@ -23,9 +23,16 @@ public class Main {
         map = new HashMap<>();
 
         String gloss;
+
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("Staring Word?");
+        String startingWord = in.nextLine();
+        System.out.println("Parts of Speech to include? ('nvar' for all)");  // n for noun, v for verb,
+        String pos = in.nextLine();                                          // a for adjective, and r for adverb
         LinkedList<IIndexWord> wordList = new LinkedList<>();
-        for (POS pos : POS.values()) {
-            IIndexWord idxWord = dict.getIndexWord("apple", pos);
+        for (POS p : POS.values()) {    // starting word deliberately expands all parts of speech to begin with,
+            IIndexWord idxWord = dict.getIndexWord(startingWord, p);   // to reduce chance of instantly petering out
             if (idxWord != null ) {
                 wordList.add(idxWord);
             }
@@ -46,7 +53,7 @@ public class Main {
             System.out.println("-" + word.getLemma());
             gloss = word.getSynset().getGloss();
             //System.out.println("Gloss = " + gloss);
-            wordList.addAll(expandDefinitionOfWord(word));
+            wordList.addAll(expandDefinitionOfWord(word, pos));
             for (String s : definitionToList(gloss)) {
                 map.putIfAbsent(s, word);
             }
@@ -68,13 +75,13 @@ public class Main {
         return result;
     }
 
-    private static List<IIndexWord> expandDefinitionOfWord(IWord word) {
+    private static List<IIndexWord> expandDefinitionOfWord(IWord word, String pos) {
 
         List<IIndexWord> validUnseenWords = new ArrayList<>();
         int count = 0;
         for (String s : definitionToList(word.getSynset().getGloss())) {
-            //for (POS pos : POS.values()) {
-                IIndexWord idxWord = dict.getIndexWord(s, POS.ADJECTIVE);
+            for (char c : pos.toCharArray()) {
+                IIndexWord idxWord = dict.getIndexWord(s, POS.getPartOfSpeech(c));
                 if (idxWord != null && !map.containsKey(idxWord.getLemma())) {
                     validUnseenWords.add(idxWord);
                     count++;
@@ -82,7 +89,7 @@ public class Main {
                 //TODO: Don't count multiple occurrences of the same word
                 //TODO: Don't count accidental function words, e.g. 'OR' (for Oregon) or 'At' (for Astatine)
                 //TODO: Don't count self
-            //}
+            }
         }
         System.out.println("Returned " + count + " valid unseen senses for words in - "
                 + word.getLemma() + ": \"" + word.getSynset().getGloss().split("\"")[0] + "\"");
