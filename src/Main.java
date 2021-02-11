@@ -31,7 +31,10 @@ public class Main {
             System.out.println("Parts of Speech to include? ('nvar' for all)");  // n for noun, v for verb,
             pos = in.nextLine();                                          // a for adjective, and r for adverb
         }
-        for(int j = 0; j < 10; j++){
+        System.out.println("Number of word entries?");
+        int numTimes = in.nextInt();
+        in.nextLine();
+        for(int j = 0; j < numTimes; j++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
 
@@ -80,10 +83,10 @@ public class Main {
  //        System.out.println("Difference between 2 and 3: ");
  //       System.out.println("Difference between 1 and 3: ");*/
 
-        FileWriter fr = new FileWriter(new File("results.txt"), true);
-        for (int i = 0; i < 10; i++){
-            System.out.println(userWords.get(i) + " - Size: " + result.get(i).size());
-            fr.write(userWords.get(i) + ", " + result.get(i).size() + "\n");
+        FileWriter fr = new FileWriter(new File("results.csv"), true);
+        for (int i = 0; i < numTimes; i++){
+            System.out.println(userWords.get(i) + " - Size: " + result.get(i).size() + " using '" + pos + "'");
+            fr.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos + "\n");
         }
         fr.close();
     }
