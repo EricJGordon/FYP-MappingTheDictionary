@@ -34,7 +34,10 @@ public class Main {
         System.out.println("Number of word entries?");
         int numTimes = in.nextInt();
         in.nextLine();
-        for(int j = 0; j < numTimes; j++){
+        System.out.println("Max number of definitions to consider for each?");
+        int maxNumDefinitionsConsidered = in.nextInt();
+        in.nextLine();
+        for(int i = 0; i < numTimes; i++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
 
@@ -53,18 +56,20 @@ public class Main {
                 }
             }
 
-            int i = 0;
+            int totalIters = 0;
             while (!wordList.isEmpty() /*&& i < 300*/){
                 IIndexWord idxWord = wordList.remove();
                 expandedWords.put(idxWord, dict.getWord(idxWord.getWordIDs().get(0)).getSynset().getGloss() + "\n");
-                IWordID wordID = idxWord
-                        .getWordIDs()
-                        .get(0);
-                IWord word = dict.getWord(wordID);
-                //System.out.println("Id = " + wordID);
-                //System.out.println("-" + word.getLemma());
-                wordList.addAll(expandDefinitionOfWord(word, pos));
-                //System.out.println("Iter " + i++ + ": \n\tMap size = " + expandedWords.size() + "\n\tList size = " + wordList.size());
+                List<IWordID> wordIDS = idxWord.getWordIDs();
+                int max = Math.max(maxNumDefinitionsConsidered, wordIDS.size());
+                for (int j = 0 ; j < max; j++ ){
+                    IWordID wordID = wordIDS.get(0);
+                    IWord word = dict.getWord(wordID);
+                    //System.out.println("Id = " + wordID);
+                    //System.out.println("-" + word.getLemma());
+                    wordList.addAll(expandDefinitionOfWord(word, pos));
+                    //System.out.println("Iter " + totalIters++ + ": \n\tMap size = " + expandedWords.size() + "\n\tList size = " + wordList.size());
+                }
             }
             result.add(expandedWords);
         }
@@ -86,7 +91,7 @@ public class Main {
         FileWriter fr = new FileWriter(new File("results.csv"), true);
         for (int i = 0; i < numTimes; i++){
             System.out.println(userWords.get(i) + " - Size: " + result.get(i).size() + " using '" + pos + "'");
-            fr.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos + "\n");
+            fr.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n");
         }
         fr.close();
     }
