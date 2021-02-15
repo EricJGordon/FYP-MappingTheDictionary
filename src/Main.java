@@ -14,6 +14,7 @@ public class Main {
 
     private static IDictionary dict;
     private static Map<IIndexWord, IWord> expandedAndPendingWords;
+    private static boolean showPrintStatements;
 
 
     public static void main(String[] args) throws IOException {
@@ -37,6 +38,9 @@ public class Main {
         System.out.println("Max number of definitions to consider for each?");
         int maxNumDefinitionsConsidered = in.nextInt();
         in.nextLine();
+        System.out.println("Show print statements? (y/n)");
+        answer = in.nextLine();
+        showPrintStatements = answer.equals("y") || answer.equals("Y");
         for(int i = 0; i < numTimes; i++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
@@ -57,18 +61,21 @@ public class Main {
             }
 
             int totalIters = 0;
-            while (!wordList.isEmpty() /*&& i < 300*/){
+            while (!wordList.isEmpty() /*&& totalIters < 20*/ ){
                 IIndexWord idxWord = wordList.remove();
                 expandedWords.put(idxWord, dict.getWord(idxWord.getWordIDs().get(0)).getSynset().getGloss() + "\n");
                 List<IWordID> wordIDS = idxWord.getWordIDs();
-                int max = Math.max(maxNumDefinitionsConsidered, wordIDS.size());
+                int max = Math.min(maxNumDefinitionsConsidered, wordIDS.size());
                 for (int j = 0 ; j < max; j++ ){
-                    IWordID wordID = wordIDS.get(0);
+                    IWordID wordID = wordIDS.get(j);
                     IWord word = dict.getWord(wordID);
-                    //System.out.println("Id = " + wordID);
-                    //System.out.println("-" + word.getLemma());
                     wordList.addAll(expandDefinitionOfWord(word, pos));
-                    //System.out.println("Iter " + totalIters++ + ": \n\tMap size = " + expandedWords.size() + "\n\tList size = " + wordList.size());
+                    if (showPrintStatements){
+                        System.out.println("-" + word.getLemma());
+                        System.out.println("Id = " + wordID);
+                        System.out.println('"' + word.getSynset().getGloss() + '"');
+                        System.out.println("Iter " + totalIters++ + ": \n\tMap size = " + expandedWords.size() + "\n\tList size = " + wordList.size() + "\n");
+                    }
                 }
             }
             result.add(expandedWords);
@@ -123,8 +130,10 @@ public class Main {
                 //TODO: Don't count accidental function words, e.g. 'OR' (for Oregon) or 'At' (for Astatine)
             }
         }
-        //System.out.println("Returned " + count + " valid unseen senses for words in - "
-        //        + word.getLemma() + ": \"" + word.getSynset().getGloss().split("\"")[0] + "\"");
+        if (showPrintStatements){
+            System.out.println("Returned " + count + " valid unseen senses for words in - "
+                    + word.getLemma() + ": \"" + word.getSynset().getGloss().split("\"")[0] + "\"");
+        }
         return validUnseenWords;
     }
 }

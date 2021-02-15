@@ -40,7 +40,8 @@ speckled, 10471, nvar, 1
 silicon, 10482, nvar, 1
 pith, 10470, nvar, 1
 tannin, 10470, nvar, 1
-ferrous, 10471, nvarindignant, 10472, nvar, 1
+ferrous, 10471, nvar, 1
+indignant, 10472, nvar, 1
 lexical, 10471, nvar, 1
 flurry, 10477, nvar, 1
 car, 10470, nvar, 1
@@ -110,4 +111,5 @@ story, 686, ar, 2
 shot, 691, ar, 2
 union, 707, ar, 2
 tonight, 686, ar, 5
-
+utopia, 2072, ar, 3
+dystopia, 2071, ar, 3
