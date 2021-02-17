@@ -8,6 +8,8 @@ import edu.mit.jwi.item.POS;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
@@ -15,6 +17,7 @@ public class Main {
     private static IDictionary dict;
     private static Map<IIndexWord, IWord> expandedAndPendingWords;
     private static boolean showPrintStatements;
+    private static List<String> stopwords;
 
 
     public static void main(String[] args) throws IOException {
@@ -41,6 +44,7 @@ public class Main {
         System.out.println("Show print statements? (y/n)");
         answer = in.nextLine();
         showPrintStatements = answer.equals("y") || answer.equals("Y");
+        stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         for(int i = 0; i < numTimes; i++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
@@ -122,12 +126,11 @@ public class Main {
         for (String s : definitionToList(word.getSynset().getGloss())) {
             for (char c : pos.toCharArray()) {
                 IIndexWord idxWord = dict.getIndexWord(s, POS.getPartOfSpeech(c));
-                if (idxWord != null && !expandedAndPendingWords.containsKey(idxWord)) {
+                if (idxWord != null && !expandedAndPendingWords.containsKey(idxWord) && !stopwords.contains(idxWord.getLemma())) {
                     validUnseenWords.add(idxWord);
                     expandedAndPendingWords.put(idxWord, word);
                     count++;
                 }
-                //TODO: Don't count accidental function words, e.g. 'OR' (for Oregon) or 'At' (for Astatine)
             }
         }
         if (showPrintStatements){
