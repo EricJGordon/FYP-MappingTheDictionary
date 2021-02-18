@@ -1,5 +1,8 @@
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.IRAMDictionary;
+import edu.mit.jwi.RAMDictionary;
+import edu.mit.jwi.data.ILoadPolicy;
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
@@ -7,7 +10,6 @@ import edu.mit.jwi.item.POS;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -20,13 +22,23 @@ public class Main {
     private static List<String> stopwords;
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
         dict.open();
         ArrayList<Map> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
         String pos = null;
+
+        IRAMDictionary dict = new RAMDictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"), ILoadPolicy.NO_LOAD);
+        dict.open();
+        dict.load(true);
+        System.out.println("Getting random words:\n-------------------");
+        List<IWord> myList = dictAsList(dict);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(myList.get(new Random().nextInt(myList.size())).getLemma().replace('_', ' '));
+        }
+
         Scanner in = new Scanner(System.in);
         System.out.println("Use the same Part of Speech for all words? (y/n)");
         String answer = in.nextLine();
@@ -106,6 +118,7 @@ public class Main {
         }
         fr.close();
     }
+
     private static List<String> definitionToList(String s){
         String punctuation = "[!._,'@?; ]";
         String glossOnly = s.split("\"")[0];
@@ -138,5 +151,15 @@ public class Main {
                     + word.getLemma() + ": \"" + word.getSynset().getGloss().split("\"")[0] + "\"");
         }
         return validUnseenWords;
+    }
+
+    private static List<IWord> dictAsList(IDictionary dict) {
+        Set<IWord> uniqueWordSet = new HashSet<>();
+        for (POS pos : POS.values())
+            for (Iterator<IIndexWord> i = dict.getIndexWordIterator(pos); i.hasNext(); )
+                for (IWordID wid : i.next().getWordIDs()) {
+                    uniqueWordSet.addAll(dict.getWord(wid).getSynset().getWords());
+                }
+        return List.copyOf(uniqueWordSet);
     }
 }
