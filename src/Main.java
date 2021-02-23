@@ -28,41 +28,70 @@ public class Main {
         dict.open();
         ArrayList<Map> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
+        List<IWord> completeList;
+        List<IWord> randomList = null;
         String pos = null;
-
-        IRAMDictionary dict = new RAMDictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"), ILoadPolicy.NO_LOAD);
-        dict.open();
-        dict.load(true);
-        System.out.println("Getting random words:\n-------------------");
-        List<IWord> myList = dictAsList(dict);
-        for (int i = 0; i < 10; i++) {
-            System.out.println(myList.get(new Random().nextInt(myList.size())).getLemma().replace('_', ' '));
-        }
+        boolean samePOS;
+        int numTimes;
+        int maxNumDefinitionsConsidered;
 
         Scanner in = new Scanner(System.in);
-        System.out.println("Use the same Part of Speech for all words? (y/n)");
+        System.out.println("Use presets?");
         String answer = in.nextLine();
-        boolean samePOS = answer.equals("y") || answer.equals("Y");
-        if (samePOS){
-            System.out.println("Parts of Speech to include? ('nvar' for all)");  // n for noun, v for verb,
-            pos = in.nextLine();                                          // a for adjective, and r for adverb
+        boolean usePresets = answer.equals("y") || answer.equals("Y");
+
+        if (usePresets) {
+            IRAMDictionary ramDict = new RAMDictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"), ILoadPolicy.NO_LOAD);
+            ramDict.open();
+            ramDict.load(true);
+
+            System.out.println("Getting random words:\n-------------------");
+            completeList = dictAsList(ramDict);
+            randomList = new ArrayList<>();
+            for (int i = 0; i < 500; i++) {
+                IWord word = completeList.get(new Random().nextInt(completeList.size()));
+                System.out.println(word.getLemma().replace('_', ' '));
+                randomList.add(word);
+            }
+            samePOS = true;
+            pos = "nvar";
+            numTimes = randomList.size();
+            maxNumDefinitionsConsidered = 1;
+            showPrintStatements = false;
+        } else {
+            System.out.println("Use the same Part of Speech for all words? (y/n)");
+            answer = in.nextLine();
+            samePOS = answer.equals("y") || answer.equals("Y");
+            if (samePOS){
+                System.out.println("Parts of Speech to include? ('nvar' for all)");  // n for noun, v for verb,
+                pos = in.nextLine();                                          // a for adjective, and r for adverb
+            }
+            System.out.println("Number of word entries?");
+            numTimes = in.nextInt();
+            in.nextLine();
+            System.out.println("Max number of definitions to consider for each?");
+            maxNumDefinitionsConsidered = in.nextInt();
+            in.nextLine();
+            System.out.println("Show print statements? (y/n)");
+            answer = in.nextLine();
+            showPrintStatements = answer.equals("y") || answer.equals("Y");
         }
-        System.out.println("Number of word entries?");
-        int numTimes = in.nextInt();
-        in.nextLine();
-        System.out.println("Max number of definitions to consider for each?");
-        int maxNumDefinitionsConsidered = in.nextInt();
-        in.nextLine();
-        System.out.println("Show print statements? (y/n)");
-        answer = in.nextLine();
-        showPrintStatements = answer.equals("y") || answer.equals("Y");
+
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
+        int count = 0;
         for(int i = 0; i < numTimes; i++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
+            String startingWord;
 
-            System.out.println("Starting Word?");
-            String startingWord = in.nextLine();
+            if (usePresets) {
+                startingWord = randomList.get(i).getLemma();
+                System.out.print(++count + " "); // to help eyeball the progress when dealing with a large amount of words
+            } else {
+                System.out.println("Starting Word?");
+                startingWord = in.nextLine();
+            }
+
             userWords.add(startingWord);
             if (!samePOS){
                 System.out.println("Parts of Speech to include? ('nvar' for all)");
@@ -112,6 +141,7 @@ public class Main {
  //       System.out.println("Difference between 1 and 3: ");*/
 
         FileWriter fr = new FileWriter(new File("results.csv"), true);
+        System.out.println("\nResults:");
         for (int i = 0; i < numTimes; i++){
             System.out.println(userWords.get(i) + " - Size: " + result.get(i).size() + " using '" + pos + "'");
             fr.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n");
