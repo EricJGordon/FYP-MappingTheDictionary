@@ -26,7 +26,7 @@ public class Main {
 
         dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
         dict.open();
-        ArrayList<Map> result = new ArrayList<>();
+        ArrayList<Map<IIndexWord, String>> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
         List<IWord> completeList;
         List<IWord> randomList = null;
@@ -125,20 +125,6 @@ public class Main {
             }
             result.add(expandedWords);
         }
-        /*Map<IIndexWord, String> first = result.get(0);
-        Map<IIndexWord, String> second = result.get(1);
-//        Map<IIndexWord, String> third = result.get(2);
-        HashSet<IIndexWord> diff1and2 = new HashSet<IIndexWord>(first.keySet());
-        diff1and2.removeAll(new HashSet<>(second.keySet()));
-        HashSet<IIndexWord> diff2and1 = new HashSet<IIndexWord>(second.keySet());
-        diff2and1.removeAll(new HashSet<>(first.keySet()));
-        System.out.println("First size: " + result.get(0).size());
-        System.out.println("Second size: " + result.get(1).size());
-//        System.out.println("Third size: " + result.get(2).size());
-        System.out.println("In 1 but not 2: " + diff1and2);
-        System.out.println("In 2 but not 1: " + diff2and1);
- //        System.out.println("Difference between 2 and 3: ");
- //       System.out.println("Difference between 1 and 3: ");*/
 
         FileWriter fr1 = new FileWriter(new File("results.csv"), true);
         FileWriter fr2 = new FileWriter(new File("random_results.csv"), true);
@@ -153,6 +139,19 @@ public class Main {
         }
         fr1.close();
         fr2.close();
+
+        if (result.size() == 2){    //when only two words are examined, directly compare and contrast their results
+            Map<IIndexWord, String> first = result.get(0);
+            Map<IIndexWord, String> second = result.get(1);
+            HashSet<IIndexWord> diff1and2 = new HashSet<>(first.keySet());
+            diff1and2.removeAll(new HashSet<>(second.keySet()));
+            HashSet<IIndexWord> diff2and1 = new HashSet<>(second.keySet());
+            diff2and1.removeAll(new HashSet<>(first.keySet()));
+            System.out.println("First size: " + result.get(0).size());
+            System.out.println("Second size: " + result.get(1).size());
+            System.out.println("In 1 but not 2 (" + diff1and2.size() + ") : " + diff1and2);
+            System.out.println("In 2 but not 1 (" + diff2and1.size() + ") : " + diff2and1);
+        }
     }
 
     private static List<String> definitionToList(String s){
