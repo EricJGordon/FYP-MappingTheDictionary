@@ -140,13 +140,19 @@ public class Main {
  //        System.out.println("Difference between 2 and 3: ");
  //       System.out.println("Difference between 1 and 3: ");*/
 
-        FileWriter fr = new FileWriter(new File("results.csv"), true);
+        FileWriter fr1 = new FileWriter(new File("results.csv"), true);
+        FileWriter fr2 = new FileWriter(new File("random_results.csv"), true);
         System.out.println("\nResults:");
         for (int i = 0; i < numTimes; i++){
             System.out.println(userWords.get(i) + " - Size: " + result.get(i).size() + " using '" + pos + "'");
-            fr.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n");
+            String line = userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n";
+            fr1.write(line);
+            if (usePresets){
+                fr2.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n");
+            }
         }
-        fr.close();
+        fr1.close();
+        fr2.close();
     }
 
     private static List<String> definitionToList(String s){
