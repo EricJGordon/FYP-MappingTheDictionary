@@ -10,6 +10,7 @@ import edu.mit.jwi.item.POS;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -26,6 +27,10 @@ public class Main {
 
         dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
         dict.open();
+        recursivelyExpandDefinitions();
+    }
+
+    private static void recursivelyExpandDefinitions() throws IOException, InterruptedException {
         ArrayList<Map<IIndexWord, String>> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
         List<IWord> completeList;
