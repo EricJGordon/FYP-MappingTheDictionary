@@ -21,6 +21,7 @@ public class Main {
     private static Map<IIndexWord, IWord> expandedAndPendingWords;
     private static boolean showPrintStatements;
     private static List<String> stopwords;
+    private static Scanner in;
 
 
     public static void main(String[] args) throws Exception {
@@ -28,26 +29,21 @@ public class Main {
         dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
         dict.open();
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
+        in = new Scanner(System.in);
 
         //recursivelyExpandDefinitions();
         findBidirectionalNeighbourDefinitions();
     }
 
     private static void findBidirectionalNeighbourDefinitions() {
-        List<IWord> completeList = dictAsList(dict);
-        List<IWord> randomList = new ArrayList<>();
-
-        for (int i = 0; i < 50; i++) {
-            IWord word = completeList.get(new Random().nextInt(completeList.size()));
-            System.out.println(word.getLemma().replace('_', ' '));
-            randomList.add(word);
-        }
-
+        List<IWord> completeList = new ArrayList<>(dictAsList(dict));
+        Collections.shuffle(completeList);
         List<IIndexWord> firstDef;
         List<IIndexWord> secondDefs;
         Set<String> secondDefsStrings = new HashSet<>();
-        System.out.println("--------------------");
-        for (IWord w: randomList){
+        in = new Scanner(System.in);
+        System.out.println("(Ready)\n--------------------");
+        for (IWord w: completeList){
             expandedAndPendingWords = new HashMap<>();
             firstDef = expandDefinitionOfWord(w, "nvar");
             for (IIndexWord indexWord : firstDef) {
@@ -56,7 +52,8 @@ public class Main {
                     secondDefsStrings.clear();
                     secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
                     if (secondDefsStrings.contains(w.getLemma())) {
-                        System.out.println(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                        System.out.print(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                        in.nextLine();
                     }
                 }
             }
@@ -73,7 +70,6 @@ public class Main {
         int numTimes;
         int maxNumDefinitionsConsidered;
 
-        Scanner in = new Scanner(System.in);
         System.out.println("Use presets?");
         String answer = in.nextLine();
         boolean usePresets = answer.equals("y") || answer.equals("Y");
