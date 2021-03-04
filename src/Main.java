@@ -27,7 +27,40 @@ public class Main {
 
         dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
         dict.open();
-        recursivelyExpandDefinitions();
+        stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
+
+        //recursivelyExpandDefinitions();
+        findBidirectionalNeighbourDefinitions();
+    }
+
+    private static void findBidirectionalNeighbourDefinitions() {
+        List<IWord> completeList = dictAsList(dict);
+        List<IWord> randomList = new ArrayList<>();
+
+        for (int i = 0; i < 50; i++) {
+            IWord word = completeList.get(new Random().nextInt(completeList.size()));
+            System.out.println(word.getLemma().replace('_', ' '));
+            randomList.add(word);
+        }
+
+        List<IIndexWord> first;
+        List<IIndexWord> second;
+        Set<String> secondAsStrings = new HashSet<>();
+        String prev = null;
+        for (IWord w: randomList){
+            expandedAndPendingWords = new HashMap<>();
+            first = expandDefinitionOfWord(w, "nvar");
+            for (IIndexWord indexWord : first) {
+                for (IWordID wordID : indexWord.getWordIDs()) {
+                    second = expandDefinitionOfWord(dict.getWord(wordID), "nvar");
+                    second.forEach((word) -> secondAsStrings.add(word.getLemma()));
+                }
+                if (!indexWord.getLemma().equals(prev) && secondAsStrings.contains(w.getLemma())) {
+                    System.out.println(w.getLemma() + " and " + indexWord.getLemma() + " are Neighbours!");
+                }
+                prev = indexWord.getLemma();
+            }
+        }
     }
 
     private static void recursivelyExpandDefinitions() throws IOException, InterruptedException {
@@ -82,7 +115,6 @@ public class Main {
             showPrintStatements = answer.equals("y") || answer.equals("Y");
         }
 
-        stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         int count = 0;
         for(int i = 0; i < numTimes; i++){
             Map<IIndexWord, String> expandedWords = new HashMap<>();
