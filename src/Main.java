@@ -41,6 +41,8 @@ public class Main {
         List<IIndexWord> firstDef;
         List<IIndexWord> secondDefs;
         Set<String> secondDefsStrings = new HashSet<>();
+        List<IIndexWord> thirdDefs;
+        Set<String> thirdDefsStrings = new HashSet<>();
         in = new Scanner(System.in);
         System.out.println("(Ready)\n--------------------");
         for (IWord w: completeList){
@@ -54,6 +56,18 @@ public class Main {
                     if (secondDefsStrings.contains(w.getLemma())) {
                         System.out.print(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
                         in.nextLine();
+                    }
+                    for (IIndexWord indexWord2 : secondDefs) {
+                        for (IWordID wordID2 : indexWord2.getWordIDs()) {
+                            thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar");
+                            thirdDefsStrings.clear();
+                            thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
+                            if (thirdDefsStrings.contains(w.getLemma())) {
+                                System.out.print("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma()
+                                        + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
+                                in.nextLine();
+                            }
+                        }
                     }
                 }
             }
