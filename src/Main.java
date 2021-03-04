@@ -43,22 +43,22 @@ public class Main {
             randomList.add(word);
         }
 
-        List<IIndexWord> first;
-        List<IIndexWord> second;
-        Set<String> secondAsStrings = new HashSet<>();
-        String prev = null;
+        List<IIndexWord> firstDef;
+        List<IIndexWord> secondDefs;
+        Set<String> secondDefsStrings = new HashSet<>();
+        System.out.println("--------------------");
         for (IWord w: randomList){
             expandedAndPendingWords = new HashMap<>();
-            first = expandDefinitionOfWord(w, "nvar");
-            for (IIndexWord indexWord : first) {
+            firstDef = expandDefinitionOfWord(w, "nvar");
+            for (IIndexWord indexWord : firstDef) {
                 for (IWordID wordID : indexWord.getWordIDs()) {
-                    second = expandDefinitionOfWord(dict.getWord(wordID), "nvar");
-                    second.forEach((word) -> secondAsStrings.add(word.getLemma()));
+                    secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar");
+                    secondDefsStrings.clear();
+                    secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
+                    if (secondDefsStrings.contains(w.getLemma())) {
+                        System.out.println(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                    }
                 }
-                if (!indexWord.getLemma().equals(prev) && secondAsStrings.contains(w.getLemma())) {
-                    System.out.println(w.getLemma() + " and " + indexWord.getLemma() + " are Neighbours!");
-                }
-                prev = indexWord.getLemma();
             }
         }
     }
