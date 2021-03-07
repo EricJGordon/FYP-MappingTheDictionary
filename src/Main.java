@@ -53,7 +53,8 @@ public class Main {
                     secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
                     secondDefsStrings.clear();
                     secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
-                    if (secondDefsStrings.contains(w.getLemma())) {
+                    if (secondDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma())).size() == 2) {
+                                                                                        // checking that they are two distinct lemmas
                         System.out.print(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
                         in.nextLine();
                     }
@@ -62,7 +63,8 @@ public class Main {
                             thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar", true);
                             thirdDefsStrings.clear();
                             thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
-                            if (thirdDefsStrings.contains(w.getLemma())) {
+                            if (thirdDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma(), wordID2.getLemma())).size() == 3) {
+                                                                                        // checking that they are three mutually distinct lemmas
                                 System.out.print("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma()
                                         + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
                                 in.nextLine();
