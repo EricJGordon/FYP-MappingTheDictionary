@@ -47,10 +47,10 @@ public class Main {
         System.out.println("(Ready)\n--------------------");
         for (IWord w: completeList){
             expandedAndPendingWords = new HashMap<>();
-            firstDef = expandDefinitionOfWord(w, "nvar");
+            firstDef = expandDefinitionOfWord(w, "nvar", true);
             for (IIndexWord indexWord : firstDef) {
                 for (IWordID wordID : indexWord.getWordIDs()) {
-                    secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar");
+                    secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
                     secondDefsStrings.clear();
                     secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
                     if (secondDefsStrings.contains(w.getLemma())) {
@@ -59,7 +59,7 @@ public class Main {
                     }
                     for (IIndexWord indexWord2 : secondDefs) {
                         for (IWordID wordID2 : indexWord2.getWordIDs()) {
-                            thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar");
+                            thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar", true);
                             thirdDefsStrings.clear();
                             thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
                             if (thirdDefsStrings.contains(w.getLemma())) {
@@ -161,7 +161,7 @@ public class Main {
                 for (int j = 0 ; j < max; j++ ){
                     IWordID wordID = wordIDS.get(j);
                     IWord word = dict.getWord(wordID);
-                    wordList.addAll(expandDefinitionOfWord(word, pos));
+                    wordList.addAll(expandDefinitionOfWord(word, pos, false));
                     if (showPrintStatements){
                         System.out.println("-" + word.getLemma());
                         System.out.println("Id = " + wordID);
@@ -221,14 +221,14 @@ public class Main {
         return result;
     }
 
-    private static List<IIndexWord> expandDefinitionOfWord(IWord word, String pos) {
+    private static List<IIndexWord> expandDefinitionOfWord(IWord word, String pos, boolean allowRepeats) {
 
         List<IIndexWord> validUnseenWords = new ArrayList<>();
         int count = 0;
         for (String s : definitionToList(word.getSynset().getGloss())) {
             for (char c : pos.toCharArray()) {
                 IIndexWord idxWord = dict.getIndexWord(s, POS.getPartOfSpeech(c));
-                if (idxWord != null && !expandedAndPendingWords.containsKey(idxWord) && !stopwords.contains(idxWord.getLemma())) {
+                if (idxWord != null && !stopwords.contains(idxWord.getLemma()) && (allowRepeats || !expandedAndPendingWords.containsKey(idxWord))) {
                     validUnseenWords.add(idxWord);
                     expandedAndPendingWords.put(idxWord, word);
                     count++;
