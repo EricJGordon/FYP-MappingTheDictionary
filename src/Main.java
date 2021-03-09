@@ -44,9 +44,13 @@ public class Main {
         List<IIndexWord> thirdDefs;
         Set<String> thirdDefsStrings = new HashSet<>();
         in = new Scanner(System.in);
+        System.out.println("Prompt after each found cycle?");
+        String answer = in.nextLine();
+        boolean promptAfterEach = answer.equals("y") || answer.equals("Y");
         System.out.println("(Ready)\n--------------------");
         for (IWord w: completeList){
             expandedAndPendingWords = new HashMap<>();
+            int count2cycles = 0, count3cycles = 0;
             firstDef = expandDefinitionOfWord(w, "nvar", true);
             for (IIndexWord indexWord : firstDef) {
                 for (IWordID wordID : indexWord.getWordIDs()) {
@@ -55,8 +59,11 @@ public class Main {
                     secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
                     if (secondDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma())).size() == 2) {
                                                                                         // checking that they are two distinct lemmas
-                        System.out.print(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
-                        in.nextLine();
+                        System.out.println(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                        count2cycles++;
+                        if (promptAfterEach){
+                            in.nextLine();
+                        }
                     }
                     for (IIndexWord indexWord2 : secondDefs) {
                         for (IWordID wordID2 : indexWord2.getWordIDs()) {
@@ -65,14 +72,18 @@ public class Main {
                             thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
                             if (thirdDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma(), wordID2.getLemma())).size() == 3) {
                                                                                         // checking that they are three mutually distinct lemmas
-                                System.out.print("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma()
+                                System.out.println("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma()
                                         + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
-                                in.nextLine();
+                                count3cycles++;
+                                if (promptAfterEach){
+                                    in.nextLine();
+                                }
                             }
                         }
                     }
                 }
             }
+            System.out.println(w.getLemma() + ", " + count2cycles + ", " + count3cycles);
         }
     }
 
