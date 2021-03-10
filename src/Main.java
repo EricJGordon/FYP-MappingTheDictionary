@@ -43,14 +43,16 @@ public class Main {
         Set<String> secondDefsStrings = new HashSet<>();
         List<IIndexWord> thirdDefs;
         Set<String> thirdDefsStrings = new HashSet<>();
+        List<IIndexWord> fourthDefs;
+        Set<String> fourthDefsStrings = new HashSet<>();
         in = new Scanner(System.in);
-        System.out.println("Prompt after each found cycle?");
+        System.out.println("Prompt after each found cycle? (y/n)");
         String answer = in.nextLine();
         boolean promptAfterEach = answer.equals("y") || answer.equals("Y");
         System.out.println("(Ready)\n--------------------");
         for (IWord w: completeList){
             expandedAndPendingWords = new HashMap<>();
-            int count2cycles = 0, count3cycles = 0;
+            int count2cycles = 0, count3cycles = 0, count4cycles = 0;
             firstDef = expandDefinitionOfWord(w, "nvar", true);
             for (IIndexWord indexWord : firstDef) {
                 for (IWordID wordID : indexWord.getWordIDs()) {
@@ -79,11 +81,27 @@ public class Main {
                                     in.nextLine();
                                 }
                             }
+                            for (IIndexWord indexWord3 : thirdDefs) {
+                                for (IWordID wordID3 : indexWord3.getWordIDs()) {
+                                    fourthDefs = expandDefinitionOfWord(dict.getWord(wordID3), "nvar", true);
+                                    fourthDefsStrings.clear();
+                                    fourthDefs.forEach((word) -> fourthDefsStrings.add(word.getLemma()));
+                                    if (fourthDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma(), wordID2.getLemma(), wordID3.getLemma())).size() == 4) {
+                                        System.out.println("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma() + " (" + wordID.getPOS() + "), "
+                                                 + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a 4-cycle!");
+                                        count4cycles++;
+                                        if (promptAfterEach){
+                                            in.nextLine();
+                                        }
+                                    }
+                                    // TODO: parameterize number of cycles to process, instead of manually adding loops
+                                }
+                            }
                         }
                     }
                 }
             }
-            System.out.println(w.getLemma() + ", " + count2cycles + ", " + count3cycles);
+            System.out.println(w.getLemma() + ", " + count2cycles + ", " + count3cycles + ", " + count4cycles);
         }
     }
 
