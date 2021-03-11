@@ -56,7 +56,8 @@ public class Main {
             promptAfterEach = answer.equals("y") || answer.equals("Y");
         }
         System.out.println("(Ready)\n--------------------");
-        for (IWord iWord : completeList) {
+        for (IWord iWord : completeList) {  // using this instead of a set of unique lemmas so that lemmas with more senses
+                                            // have a likelihood of being chosen proportional to their amount of senses
             String w;
             if (manuallyInputWords) {
                 System.out.println("Next Word?");
@@ -72,8 +73,9 @@ public class Main {
                 }
             }
             expandedAndPendingWords = new HashMap<>();
+            Set<String> cyclesForCurrentLemma = new HashSet<>();
             int count2cycles = 0, count3cycles = 0, count4cycles = 0;
-            for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shirt later names accordingly
+            for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shift later names accordingly
                 for (IWordID wordID0 : indexWord0.getWordIDs()) {
                     firstDef = expandDefinitionOfWord(dict.getWord(wordID0), "nvar", true);
                     for (IIndexWord indexWord : firstDef) {
@@ -81,9 +83,11 @@ public class Main {
                             secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
                             secondDefsStrings.clear();
                             secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
-                            if (secondDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma())).size() == 2) {
+                            String currentCombo = w + "," + wordID.getLemma();
+                            if (secondDefsStrings.contains(w) && !cyclesForCurrentLemma.contains(currentCombo) && new HashSet<>(Arrays.asList(w, wordID.getLemma())).size() == 2) {
                                 // checking that they are two distinct lemmas
                                 System.out.println(w + " (" + wordID0.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                                cyclesForCurrentLemma.add(currentCombo);
                                 count2cycles++;
                                 if (promptAfterEach){
                                     in.nextLine();
@@ -94,10 +98,12 @@ public class Main {
                                     thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar", true);
                                     thirdDefsStrings.clear();
                                     thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
-                                    if (thirdDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma())).size() == 3) {
+                                    currentCombo = w + "," + wordID.getLemma() + "," + wordID2.getLemma();
+                                    if (thirdDefsStrings.contains(w) && !cyclesForCurrentLemma.contains(currentCombo) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma())).size() == 3) {
                                         // checking that they are three mutually distinct lemmas
                                         System.out.println("*** " + w + " (" + wordID0.getPOS() + "), " + wordID.getLemma()
                                                 + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
+                                        cyclesForCurrentLemma.add(currentCombo);
                                         count3cycles++;
                                         if (promptAfterEach){
                                             in.nextLine();
@@ -108,10 +114,12 @@ public class Main {
                                             fourthDefs = expandDefinitionOfWord(dict.getWord(wordID3), "nvar", true);
                                             fourthDefsStrings.clear();
                                             fourthDefs.forEach((word) -> fourthDefsStrings.add(word.getLemma()));
-                                            if (fourthDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma(), wordID3.getLemma())).size() == 4) {
+                                            currentCombo = w + "," + wordID.getLemma() + "," + wordID2.getLemma() + "," + wordID3.getLemma();
+                                            if (fourthDefsStrings.contains(w) && !cyclesForCurrentLemma.contains(currentCombo) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma(), wordID3.getLemma())).size() == 4) {
                                                 System.out.println("*** " + w + " (" + wordID0.getPOS() + "), " + wordID.getLemma() + " (" + wordID.getPOS() + "), "
                                                         + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a 4-cycle!");
                                                 count4cycles++;
+                                                cyclesForCurrentLemma.add(currentCombo);
                                                 if (promptAfterEach){
                                                     in.nextLine();
                                                 }
