@@ -46,62 +46,86 @@ public class Main {
         List<IIndexWord> fourthDefs;
         Set<String> fourthDefsStrings = new HashSet<>();
         in = new Scanner(System.in);
-        System.out.println("Prompt after each found cycle? (y/n)");
+        System.out.println("Manually input words? (y/n)");
         String answer = in.nextLine();
-        boolean promptAfterEach = answer.equals("y") || answer.equals("Y");
+        boolean manuallyInputWords = answer.equals("y") || answer.equals("Y");
+        boolean promptAfterEach = false;
+        if (!manuallyInputWords) {
+            System.out.println("Prompt after each found cycle? (y/n)");
+            answer = in.nextLine();
+            promptAfterEach = answer.equals("y") || answer.equals("Y");
+        }
         System.out.println("(Ready)\n--------------------");
-        for (IWord w: completeList){
+        for (IWord iWord : completeList) {
+            String w;
+            if (manuallyInputWords) {
+                System.out.println("Next Word?");
+                w = in.nextLine();
+            } else {
+                w = iWord.getLemma();
+            }
+            List<IIndexWord> wordList = new ArrayList<>();
+            for (POS p : POS.values()) {    // starting word deliberately expands all parts of speech to begin with,
+                IIndexWord idxWord = dict.getIndexWord(w, p);   // to reduce chance of instantly petering out
+                if (idxWord != null ) {
+                    wordList.add(idxWord);
+                }
+            }
             expandedAndPendingWords = new HashMap<>();
             int count2cycles = 0, count3cycles = 0, count4cycles = 0;
-            firstDef = expandDefinitionOfWord(w, "nvar", true);
-            for (IIndexWord indexWord : firstDef) {
-                for (IWordID wordID : indexWord.getWordIDs()) {
-                    secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
-                    secondDefsStrings.clear();
-                    secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
-                    if (secondDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma())).size() == 2) {
-                                                                                        // checking that they are two distinct lemmas
-                        System.out.println(w.getLemma() + " (" + w.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
-                        count2cycles++;
-                        if (promptAfterEach){
-                            in.nextLine();
-                        }
-                    }
-                    for (IIndexWord indexWord2 : secondDefs) {
-                        for (IWordID wordID2 : indexWord2.getWordIDs()) {
-                            thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar", true);
-                            thirdDefsStrings.clear();
-                            thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
-                            if (thirdDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma(), wordID2.getLemma())).size() == 3) {
-                                                                                        // checking that they are three mutually distinct lemmas
-                                System.out.println("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma()
-                                        + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
-                                count3cycles++;
+            for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shirt later names accordingly
+                for (IWordID wordID0 : indexWord0.getWordIDs()) {
+                    firstDef = expandDefinitionOfWord(dict.getWord(wordID0), "nvar", true);
+                    for (IIndexWord indexWord : firstDef) {
+                        for (IWordID wordID : indexWord.getWordIDs()) {
+                            secondDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
+                            secondDefsStrings.clear();
+                            secondDefs.forEach((word) -> secondDefsStrings.add(word.getLemma()));
+                            if (secondDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma())).size() == 2) {
+                                // checking that they are two distinct lemmas
+                                System.out.println(w + " (" + wordID0.getPOS() + ") and " + wordID.getLemma() + " (" + wordID.getPOS() + ") are Neighbours!");
+                                count2cycles++;
                                 if (promptAfterEach){
                                     in.nextLine();
                                 }
                             }
-                            for (IIndexWord indexWord3 : thirdDefs) {
-                                for (IWordID wordID3 : indexWord3.getWordIDs()) {
-                                    fourthDefs = expandDefinitionOfWord(dict.getWord(wordID3), "nvar", true);
-                                    fourthDefsStrings.clear();
-                                    fourthDefs.forEach((word) -> fourthDefsStrings.add(word.getLemma()));
-                                    if (fourthDefsStrings.contains(w.getLemma()) && new HashSet<>(Arrays.asList(w.getLemma(), wordID.getLemma(), wordID2.getLemma(), wordID3.getLemma())).size() == 4) {
-                                        System.out.println("*** " + w.getLemma() + " (" + w.getPOS() + "), " + wordID.getLemma() + " (" + wordID.getPOS() + "), "
-                                                 + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a 4-cycle!");
-                                        count4cycles++;
+                            for (IIndexWord indexWord2 : secondDefs) {
+                                for (IWordID wordID2 : indexWord2.getWordIDs()) {
+                                    thirdDefs = expandDefinitionOfWord(dict.getWord(wordID2), "nvar", true);
+                                    thirdDefsStrings.clear();
+                                    thirdDefs.forEach((word) -> thirdDefsStrings.add(word.getLemma()));
+                                    if (thirdDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma())).size() == 3) {
+                                        // checking that they are three mutually distinct lemmas
+                                        System.out.println("*** " + w + " (" + wordID0.getPOS() + "), " + wordID.getLemma()
+                                                + " (" + wordID.getPOS() + ") and " + wordID2.getLemma() + " (" + wordID2.getPOS()+ ") form a 3-cycle!");
+                                        count3cycles++;
                                         if (promptAfterEach){
                                             in.nextLine();
                                         }
                                     }
-                                    // TODO: parameterize number of cycles to process, instead of manually adding loops
+                                    for (IIndexWord indexWord3 : thirdDefs) {
+                                        for (IWordID wordID3 : indexWord3.getWordIDs()) {
+                                            fourthDefs = expandDefinitionOfWord(dict.getWord(wordID3), "nvar", true);
+                                            fourthDefsStrings.clear();
+                                            fourthDefs.forEach((word) -> fourthDefsStrings.add(word.getLemma()));
+                                            if (fourthDefsStrings.contains(w) && new HashSet<>(Arrays.asList(w, wordID.getLemma(), wordID2.getLemma(), wordID3.getLemma())).size() == 4) {
+                                                System.out.println("*** " + w + " (" + wordID0.getPOS() + "), " + wordID.getLemma() + " (" + wordID.getPOS() + "), "
+                                                        + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a 4-cycle!");
+                                                count4cycles++;
+                                                if (promptAfterEach){
+                                                    in.nextLine();
+                                                }
+                                            }
+                                            // TODO: parameterize number of cycles to process, instead of manually adding loops
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            System.out.println(w.getLemma() + ", " + count2cycles + ", " + count3cycles + ", " + count4cycles);
+            System.out.println(w + ", " + count2cycles + ", " + count3cycles + ", " + count4cycles);
         }
     }
 
