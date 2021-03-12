@@ -30,12 +30,19 @@ public class Main {
         dict.open();
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         in = new Scanner(System.in);
-
-        //recursivelyExpandDefinitions();
-        findBidirectionalNeighbourDefinitions();
+        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles");
+        String answer = in.nextLine();
+        switch (answer) {
+            case "1":
+                recursivelyExpandDefinitions();
+                break;
+            case "2":
+                findCycles();
+                break;
+        }
     }
 
-    private static void findBidirectionalNeighbourDefinitions() {
+    private static void findCycles() {
         List<IWord> completeList = new ArrayList<>(dictAsList(dict));
         Collections.shuffle(completeList);
         List<IIndexWord> firstDef;
