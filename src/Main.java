@@ -85,13 +85,14 @@ public class Main {
             for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shift later names accordingly
                 for (IWordID wordID : indexWord0.getWordIDs()) {
                     firstDef = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
-                    recursivelyFindCycles(firstDef, List.of(w), cyclesFoundForCurrentLemma,  2, cycleCounts,  maxCycleLength - 2);
+                    recursivelyFindCycles(firstDef, List.of(w), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
                 }
             }
             System.out.println(w + " - " + cycleCounts.toString());
         }
     }
-    private static void recursivelyFindCycles(List<IIndexWord> currentLevelDefs, List<String> comboSoFar, Set<String> cyclesFoundForCurrentLemma, int cycleLength, List<Integer> cycleCounts, int levelsRemaining){
+    private static void recursivelyFindCycles(List<IIndexWord> currentLevelDefs, List<String> comboSoFar, Set<String> cyclesFoundForCurrentLemma, List<Integer> cycleCounts, int levelsRemaining){
+        int cycleLength = comboSoFar.size() + 1;
         for (IIndexWord indexWord : currentLevelDefs) {
             for (IWordID wordID : indexWord.getWordIDs()) {
                 List<IIndexWord> nextLevelDefs = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
@@ -110,11 +111,11 @@ public class Main {
                             + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a " + cycleLength + "-cycle!"); */
                     //TODO: add back detail to printed output
                     System.out.println(currentComboString);
-                    cycleCounts.set(cycleLength -2 , cycleCounts.get(cycleLength - 2) + 1);
+                    cycleCounts.set(cycleLength - 2 , cycleCounts.get(cycleLength - 2) + 1);
                     cyclesFoundForCurrentLemma.add(currentComboString);
                 }
                 if (levelsRemaining > 0){
-                    recursivelyFindCycles(nextLevelDefs, updatedComboSoFar, cyclesFoundForCurrentLemma, cycleLength + 1, cycleCounts, levelsRemaining - 1);
+                    recursivelyFindCycles(nextLevelDefs, updatedComboSoFar, cyclesFoundForCurrentLemma, cycleCounts, levelsRemaining - 1);
                 }
             }
         }
