@@ -85,13 +85,13 @@ public class Main {
             for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shift later names accordingly
                 for (IWordID wordID : indexWord0.getWordIDs()) {
                     firstDef = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
-                    recursivelyFindCycles(firstDef, List.of(w), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
+                    recursivelyFindCycles(firstDef, List.of(w), List.of(wordID.getPOS().toString()), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
                 }
             }
             System.out.println(w + " - " + cycleCounts.toString());
         }
     }
-    private static void recursivelyFindCycles(List<IIndexWord> currentLevelDefs, List<String> comboSoFar, Set<String> cyclesFoundForCurrentLemma, List<Integer> cycleCounts, int levelsRemaining){
+    private static void recursivelyFindCycles(List<IIndexWord> currentLevelDefs, List<String> comboSoFar, List<String> posSoFar, Set<String> cyclesFoundForCurrentLemma, List<Integer> cycleCounts, int levelsRemaining){
         int cycleLength = comboSoFar.size() + 1;
         for (IIndexWord indexWord : currentLevelDefs) {
             for (IWordID wordID : indexWord.getWordIDs()) {
@@ -100,22 +100,24 @@ public class Main {
                 nextLevelDefs.forEach((word) -> nextLevelDefsStrings.add(word.getLemma()));
                 List<String> updatedComboSoFar = new ArrayList<>(comboSoFar);
                 updatedComboSoFar.add(wordID.getLemma());
+                List<String> updatedPosSoFar = new ArrayList<>(posSoFar);
+                updatedPosSoFar.add(wordID.getPOS().toString());
                 Set<String> currentComboSet = new HashSet<>(updatedComboSoFar);
                 String currentComboString = String.join(" -> ", updatedComboSoFar) + " ----> " + comboSoFar.get(0);
                 if (nextLevelDefsStrings.contains(comboSoFar.get(0)) && !cyclesFoundForCurrentLemma.contains(currentComboString) && currentComboSet.size() == cycleLength) {
-                    /*for (int i = 0; i < cycleLength; i++){
+                    for (int i = 0; i < cycleLength; i++){
                         System.out.print("* ");
                     }
-                    for (String s )
-                    System.out.println("*** " + w + " (" + wordID0.getPOS() + "), " + wordID.getLemma() + " (" + wordID.getPOS() + "), "
-                            + wordID2.getLemma() + " (" + wordID2.getPOS() + ") and " + wordID3.getLemma() + " (" + wordID3.getPOS()+ ") form a " + cycleLength + "-cycle!"); */
-                    //TODO: add back detail to printed output
-                    System.out.println(currentComboString);
+                    for (int i = 0; i < cycleLength - 1; i++){
+                        System.out.print(updatedComboSoFar.get(i) + " (" + updatedPosSoFar.get(i) + ") -> ");
+                    }
+                    int last = updatedComboSoFar.size() - 1;
+                    System.out.println(updatedComboSoFar.get(last) + " (" + updatedPosSoFar.get(last) + ") ----> " + updatedComboSoFar.get(0));
                     cycleCounts.set(cycleLength - 2 , cycleCounts.get(cycleLength - 2) + 1);
                     cyclesFoundForCurrentLemma.add(currentComboString);
                 }
                 if (levelsRemaining > 0){
-                    recursivelyFindCycles(nextLevelDefs, updatedComboSoFar, cyclesFoundForCurrentLemma, cycleCounts, levelsRemaining - 1);
+                    recursivelyFindCycles(nextLevelDefs, updatedComboSoFar, updatedPosSoFar, cyclesFoundForCurrentLemma, cycleCounts, levelsRemaining - 1);
                 }
             }
         }
