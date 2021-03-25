@@ -1,4 +1,3 @@
-import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.IRAMDictionary;
 import edu.mit.jwi.RAMDictionary;
@@ -17,7 +16,7 @@ import java.util.*;
 
 public class Main {
 
-    private static IDictionary dict;
+    private static IRAMDictionary dict;
     private static Map<IIndexWord, IWord> expandedAndPendingWords;
     private static boolean showPrintStatements;
     private static List<String> stopwords;
@@ -26,8 +25,9 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        dict = new Dictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"));
+        dict = new RAMDictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"), ILoadPolicy.NO_LOAD);
         dict.open();
+        dict.load(true);
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         in = new Scanner(System.in);
         System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles");
@@ -99,7 +99,7 @@ public class Main {
                 List<String> nextLevelDefsStrings = new ArrayList<>();
                 nextLevelDefs.forEach((word) -> nextLevelDefsStrings.add(word.getLemma()));
                 List<String> updatedComboSoFar = new ArrayList<>(comboSoFar);
-                updatedComboSoFar.add(wordID.getLemma());
+                updatedComboSoFar.add(wordID.getLemma().toLowerCase());
                 List<String> updatedPosSoFar = new ArrayList<>(posSoFar);
                 updatedPosSoFar.add(wordID.getPOS().toString());
                 Set<String> currentComboSet = new HashSet<>(updatedComboSoFar);
@@ -123,7 +123,7 @@ public class Main {
         }
     }
 
-    private static void recursivelyExpandDefinitions() throws IOException, InterruptedException {
+    private static void recursivelyExpandDefinitions() throws IOException {
         ArrayList<Map<IIndexWord, String>> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
         List<IWord> completeList;
@@ -138,12 +138,9 @@ public class Main {
         boolean usePresets = answer.equals("y") || answer.equals("Y");
 
         if (usePresets) {
-            IRAMDictionary ramDict = new RAMDictionary(new File("C:\\Program Files (x86)\\WordNet\\2.1\\dict"), ILoadPolicy.NO_LOAD);
-            ramDict.open();
-            ramDict.load(true);
-
+            //TODO: Check if switch to RamDict had effect on these results too
             System.out.println("Getting random words:\n-------------------");
-            completeList = dictAsList(ramDict);
+            completeList = dictAsList(dict);
             randomList = new ArrayList<>();
             for (int i = 0; i < 500; i++) {
                 IWord word = completeList.get(new Random().nextInt(completeList.size()));
