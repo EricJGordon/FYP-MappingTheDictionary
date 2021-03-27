@@ -248,8 +248,9 @@ public class Main {
             while (true) {
                 System.out.println("Check if word 'w' is in set 'n'?  (\"w,n\")");
                 String[] query = in.nextLine().split(",");
-                System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(dict.getIndexWord(query[0], POS.getPartOfSpeech(pos.charAt(0)))));
-                //TODO: Have it also work when pos is multiple characters
+                for (char c : pos.toCharArray()) {
+                    System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(dict.getIndexWord(query[0], POS.getPartOfSpeech(c))));
+                }
             }
         }
     }
