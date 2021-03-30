@@ -124,7 +124,7 @@ public class Main {
     }
 
     private static void recursivelyExpandDefinitions() throws IOException {
-        ArrayList<Map<IIndexWord, String>> result = new ArrayList<>();
+        ArrayList<Map<String, String>> result = new ArrayList<>();
         ArrayList<String> userWords = new ArrayList<>();
         List<IWord> completeList;
         List<IWord> randomList = null;
@@ -173,7 +173,7 @@ public class Main {
 
         int count = 0;
         for(int i = 0; i < numTimes; i++){
-            Map<IIndexWord, String> expandedWords = new HashMap<>();
+            Map<String, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashMap<>();
             String startingWord;
 
@@ -201,7 +201,7 @@ public class Main {
             int totalIters = 0;
             while (!wordList.isEmpty() /*&& totalIters < 20*/ ){
                 IIndexWord idxWord = wordList.remove();
-                expandedWords.put(idxWord, dict.getWord(idxWord.getWordIDs().get(0)).getSynset().getGloss() + "\n");
+                expandedWords.put(idxWord.getLemma(), dict.getWord(idxWord.getWordIDs().get(0)).getSynset().getGloss() + "\n");
                 List<IWordID> wordIDS = idxWord.getWordIDs();
                 int max = Math.min(maxNumDefinitionsConsidered, wordIDS.size());
                 for (int j = 0 ; j < max; j++ ){
@@ -234,11 +234,11 @@ public class Main {
         fr2.close();
 
         if (result.size() == 2){    //when only two words are examined, directly compare and contrast their results
-            Map<IIndexWord, String> first = result.get(0);
-            Map<IIndexWord, String> second = result.get(1);
-            HashSet<IIndexWord> diff1and2 = new HashSet<>(first.keySet());
+            Map<String, String> first = result.get(0);
+            Map<String, String> second = result.get(1);
+            HashSet<String> diff1and2 = new HashSet<>(first.keySet());
             diff1and2.removeAll(new HashSet<>(second.keySet()));
-            HashSet<IIndexWord> diff2and1 = new HashSet<>(second.keySet());
+            HashSet<String> diff2and1 = new HashSet<>(second.keySet());
             diff2and1.removeAll(new HashSet<>(first.keySet()));
             System.out.println("First size: " + result.get(0).size());
             System.out.println("Second size: " + result.get(1).size());
@@ -248,9 +248,7 @@ public class Main {
             while (true) {
                 System.out.println("Check if word 'w' is in set 'n'?  (\"w,n\")");
                 String[] query = in.nextLine().split(",");
-                for (char c : pos.toCharArray()) {
-                    System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(dict.getIndexWord(query[0], POS.getPartOfSpeech(c))));
-                }
+                System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(query[0]));
             }
         }
     }
