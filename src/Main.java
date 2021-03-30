@@ -216,6 +216,7 @@ public class Main {
                     }
                 }
             }
+            expandedWords.remove(startingWord);
             result.add(expandedWords);
         }
 
