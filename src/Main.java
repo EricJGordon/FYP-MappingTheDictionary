@@ -17,7 +17,7 @@ import java.util.*;
 public class Main {
 
     private static IRAMDictionary dict;
-    private static Map<IIndexWord, IWord> expandedAndPendingWords;
+    private static Set<IIndexWord> expandedAndPendingWords;
     private static boolean showPrintStatements;
     private static List<String> stopwords;
     private static Scanner in;
@@ -76,7 +76,7 @@ public class Main {
                     wordList.add(idxWord);
                 }
             }
-            expandedAndPendingWords = new HashMap<>();
+            expandedAndPendingWords = new HashSet<>();
             Set<String> cyclesFoundForCurrentLemma = new HashSet<>();
             List<Integer> cycleCounts = new ArrayList<>();
             for (int i = 0; i < maxCycleLength - 1; i++) {
@@ -133,7 +133,7 @@ public class Main {
         int numTimes;
         int maxNumDefinitionsConsidered;
 
-        System.out.println("Use presets?");
+        System.out.println("Use presets? (y/n)");
         String answer = in.nextLine();
         boolean usePresets = answer.equals("y") || answer.equals("Y");
 
@@ -173,8 +173,8 @@ public class Main {
 
         int count = 0;
         for(int i = 0; i < numTimes; i++){
-            Map<String, String> expandedWords = new HashMap<>();
-            expandedAndPendingWords = new HashMap<>();
+            Map<String, String> expandedWords = new HashMap<>(); // keeping as HashMap because plan to use the value of a pair to store it's parent word
+            expandedAndPendingWords = new HashSet<>();
             String startingWord;
 
             if (usePresets) {
@@ -225,10 +225,10 @@ public class Main {
         System.out.println("\nResults:");
         for (int i = 0; i < numTimes; i++){
             System.out.println(userWords.get(i) + " - Size: " + result.get(i).size() + " using '" + pos + "'");
-            String line = userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n";
+            String line = userWords.get(i) + ", " + result.get(i).size() + ", " + pos + ", " + maxNumDefinitionsConsidered + "\n";
             fr1.write(line);
             if (usePresets){
-                fr2.write(userWords.get(i) + ", " + result.get(i).size() + ", " + pos +", " + maxNumDefinitionsConsidered + "\n");
+                fr2.write(line);
             }
         }
         fr1.close();
@@ -274,9 +274,9 @@ public class Main {
         for (String s : definitionToList(word.getSynset().getGloss())) {
             for (char c : pos.toCharArray()) {
                 IIndexWord idxWord = dict.getIndexWord(s, POS.getPartOfSpeech(c));
-                if (idxWord != null && !stopwords.contains(idxWord.getLemma()) && (allowRepeats || !expandedAndPendingWords.containsKey(idxWord))) {
+                if (idxWord != null && !stopwords.contains(idxWord.getLemma()) && (allowRepeats || !expandedAndPendingWords.contains(idxWord))) {
                     validUnseenWords.add(idxWord);
-                    expandedAndPendingWords.put(idxWord, word);
+                    expandedAndPendingWords.add(idxWord);
                     count++;
                 }
             }
