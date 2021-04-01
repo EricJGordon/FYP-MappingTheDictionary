@@ -30,7 +30,7 @@ public class Main {
         dict.load(true);
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         in = new Scanner(System.in);
-        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles");
+        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Lonely Terms");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -39,7 +39,38 @@ public class Main {
             case "2":
                 findCycles();
                 break;
+            case "3":
+                findLonelyTerms();
+                break;
         }
+    }
+
+    private static void findLonelyTerms() throws IOException {
+        Map<String, Integer> usageCount = new HashMap<>();
+        int i = 0;
+        for (IWord w: dictAsList(dict)) {
+            usageCount.put(w.getLemma(), 0);
+            if (w.getSynset().getGloss().contains("(")) {
+                System.out.println(w.getLemma() + " - " + w.getSynset().getGloss());
+            }
+            List<String> definition = definitionToList(w.getSynset().getGloss());
+            for (String s: definition) {
+                int count = usageCount.getOrDefault(s, 0);
+                usageCount.put(s, count + 1);
+            }
+            i++;
+            if (i == 100){ // temporary
+                break;
+            }
+        }
+        FileWriter fr = new FileWriter(new File("usageFrequencyResults.csv"), true);
+        System.out.println("\nResults:");
+        for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
+            String line = entry.getKey() + ", " + entry.getValue();
+            System.out.println(line);
+            fr.write(line + "\n");
+        }
+        fr.close();
     }
 
     private static void findCycles() {
