@@ -286,7 +286,7 @@ public class Main {
     }
 
     private static List<String> definitionToList(String s){
-        String punctuation = "[!._,'@?; ]";
+        String punctuation = "[!._,'@?;(): ]";
         String glossOnly = s.split("\"")[0];
         //excludes example sentences
         StringTokenizer tokenizer = new StringTokenizer(glossOnly, punctuation);
