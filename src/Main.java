@@ -44,13 +44,14 @@ public class Main {
 
     private static void findLonelyTerms() throws IOException {
         Map<String, Integer> usageCount = new HashMap<>();
-        List<IWord> wordList = dictAsList(dict).subList(0, 100);
+        List<IWord> wordList = dictAsList(dict).subList(0, 100); // use of sublist instead of full list is temporary for testing
         for (IWord w: wordList) {
             usageCount.put(w.getLemma(), 0);
-            if (w.getSynset().getGloss().contains("(")) {
-                System.out.println(w.getLemma() + " - " + w.getSynset().getGloss());
-            }
-            List<String> definition = definitionToList(w.getSynset().getGloss());
+        }
+        Set<ISynset> uniqueSynsets = new HashSet<>();
+        wordList.forEach((word) -> uniqueSynsets.add(word.getSynset()));
+        for (ISynset synset: uniqueSynsets){           // so as not to repeat the exact same definition multiple times for each member of the synset
+            List<String> definition = definitionToList(synset.getGloss());
             for (String s: definition) {
                 int count = usageCount.getOrDefault(s, 0);
                 usageCount.put(s, count + 1);
