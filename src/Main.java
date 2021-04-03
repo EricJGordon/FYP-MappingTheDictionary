@@ -2,10 +2,7 @@ import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.IRAMDictionary;
 import edu.mit.jwi.RAMDictionary;
 import edu.mit.jwi.data.ILoadPolicy;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.IWord;
-import edu.mit.jwi.item.IWordID;
-import edu.mit.jwi.item.POS;
+import edu.mit.jwi.item.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -47,8 +44,8 @@ public class Main {
 
     private static void findLonelyTerms() throws IOException {
         Map<String, Integer> usageCount = new HashMap<>();
-        int i = 0;
-        for (IWord w: dictAsList(dict)) {
+        List<IWord> wordList = dictAsList(dict).subList(0, 100);
+        for (IWord w: wordList) {
             usageCount.put(w.getLemma(), 0);
             if (w.getSynset().getGloss().contains("(")) {
                 System.out.println(w.getLemma() + " - " + w.getSynset().getGloss());
@@ -57,10 +54,6 @@ public class Main {
             for (String s: definition) {
                 int count = usageCount.getOrDefault(s, 0);
                 usageCount.put(s, count + 1);
-            }
-            i++;
-            if (i == 100){ // temporary
-                break;
             }
         }
         FileWriter fr = new FileWriter(new File("usageFrequencyResults.csv"), true);
