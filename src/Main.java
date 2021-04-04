@@ -271,10 +271,12 @@ public class Main {
             System.out.println("In 1 but not 2 (" + diff1and2.size() + ") : " + diff1and2);
             System.out.println("In 2 but not 1 (" + diff2and1.size() + ") : " + diff2and1);
 
-            while (true) {
-                System.out.println("Check if word 'w' is in set 'n'?  (\"w,n\")");
-                String[] query = in.nextLine().split(",");
+            System.out.println("Check if word 'w' is in set 'n'?  (\"w,n\")");
+            String input = in.nextLine();
+            while (!input.equals("")) {
+                String[] query = input.split(",");
                 System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(query[0]));
+                input = in.nextLine();
             }
         }
     }
