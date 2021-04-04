@@ -276,7 +276,18 @@ public class Main {
             String input = in.nextLine();
             while (!input.equals("")) {
                 String[] query = input.split(",");
-                System.out.println(result.get(Integer.parseInt(query[1]) - 1).containsKey(query[0]));
+                Map<String, String> resultWordsMap = result.get(Integer.parseInt(query[1]) - 1);
+                boolean presentInSet = resultWordsMap.containsKey(query[0]);
+                System.out.println(presentInSet);
+                if (presentInSet){
+                    String word = resultWordsMap.get(query[0]);
+                    System.out.println("Child of \"" + word + "\"");
+                    word = resultWordsMap.get(word);
+                    while (word != null) {
+                        System.out.println("which is child of \"" + word + "\"");
+                        word = resultWordsMap.get(word);
+                    }
+                }
                 input = in.nextLine();
             }
         }
