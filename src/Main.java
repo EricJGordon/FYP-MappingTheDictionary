@@ -215,24 +215,25 @@ public class Main {
                 System.out.println("Parts of Speech to include? ('nvar' for all)");
                 pos = in.nextLine();
             }
-            LinkedList<IIndexWord> wordList = new LinkedList<>();
+            List<IIndexWord[]> wordList = new ArrayList<>();
             for (POS p : POS.values()) {    // starting word deliberately expands all parts of speech to begin with,
                 IIndexWord idxWord = dict.getIndexWord(startingWord, p);   // to reduce chance of instantly petering out
                 if (idxWord != null ) {
-                    wordList.add(idxWord);
+                    wordList.add(new IIndexWord[]{idxWord, null});
                 }
             }
 
             int totalIters = 0;
             while (!wordList.isEmpty() /*&& totalIters < 20*/ ){
-                IIndexWord idxWord = wordList.remove();
-                expandedWords.put(idxWord.getLemma(), dict.getWord(idxWord.getWordIDs().get(0)).getSynset().getGloss() + "\n");
+                IIndexWord[] pair = wordList.remove(0);
+                IIndexWord idxWord = pair[0];
+                expandedWords.put(idxWord.getLemma(), pair[1] == null ? null : pair[1].getLemma());
                 List<IWordID> wordIDS = idxWord.getWordIDs();
                 int max = Math.min(maxNumDefinitionsConsidered, wordIDS.size());
                 for (int j = 0 ; j < max; j++ ){
                     IWordID wordID = wordIDS.get(j);
                     IWord word = dict.getWord(wordID);
-                    wordList.addAll(expandDefinitionOfWord(word, pos, false));
+                    expandDefinitionOfWord(word, pos, false).forEach((w) -> wordList.add(new IIndexWord[]{w, idxWord}) );
                     if (showPrintStatements){
                         System.out.println("-" + word.getLemma());
                         System.out.println("Id = " + wordID);
