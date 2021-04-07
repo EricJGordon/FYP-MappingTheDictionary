@@ -44,7 +44,7 @@ public class Main {
 
     private static void findLonelyTerms() throws IOException {
         Map<String, Integer> usageCount = new HashMap<>();
-        List<IWord> wordList = dictAsList(dict).subList(0, 100); // use of sublist instead of full list is temporary for testing
+        List<IWord> wordList = dictAsList(dict);
         for (IWord w: wordList) {
             usageCount.put(w.getLemma(), 0);
         }
