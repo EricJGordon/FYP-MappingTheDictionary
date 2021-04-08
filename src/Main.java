@@ -3,6 +3,7 @@ import edu.mit.jwi.IRAMDictionary;
 import edu.mit.jwi.RAMDictionary;
 import edu.mit.jwi.data.ILoadPolicy;
 import edu.mit.jwi.item.*;
+import edu.mit.jwi.morph.WordnetStemmer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +19,7 @@ public class Main {
     private static boolean showPrintStatements;
     private static List<String> stopwords;
     private static Scanner in;
-
+    private static WordnetStemmer stemmer;
 
     public static void main(String[] args) throws Exception {
 
@@ -26,6 +27,7 @@ public class Main {
         dict.open();
         dict.load(true);
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
+        stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
         System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Lonely Terms");
         String answer = in.nextLine();
@@ -312,11 +314,13 @@ public class Main {
         int count = 0;
         for (String s : definitionToList(word.getSynset().getGloss())) {
             for (char c : pos.toCharArray()) {
-                IIndexWord idxWord = dict.getIndexWord(s, POS.getPartOfSpeech(c));
-                if (idxWord != null && !stopwords.contains(idxWord.getLemma()) && (allowRepeats || !expandedAndPendingWords.contains(idxWord))) {
-                    validUnseenWords.add(idxWord);
-                    expandedAndPendingWords.add(idxWord);
-                    count++;
+                for (String stem: stemmer.findStems(s, POS.getPartOfSpeech(c))){
+                    IIndexWord idxWord = dict.getIndexWord(stem, POS.getPartOfSpeech(c));
+                    if (idxWord != null && !stopwords.contains(idxWord.getLemma()) && (allowRepeats || !expandedAndPendingWords.contains(idxWord))) {
+                        validUnseenWords.add(idxWord);
+                        expandedAndPendingWords.add(idxWord);
+                        count++;
+                    }
                 }
             }
         }
