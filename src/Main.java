@@ -242,7 +242,7 @@ public class Main {
                     }
                 }
             }
-            expandedWords.remove(startingWord);
+            expandedWords.remove(startingWord.replace(' ', '_'));
             result.add(expandedWords);
         }
 
