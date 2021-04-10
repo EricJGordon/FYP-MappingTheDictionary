@@ -29,7 +29,7 @@ public class Main {
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
-        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Lonely Terms");
+        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Usage Frequency (in definitions)");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -39,12 +39,12 @@ public class Main {
                 findCycles();
                 break;
             case "3":
-                findLonelyTerms();
+                findUsageFrequencyInDefinitions();
                 break;
         }
     }
 
-    private static void findLonelyTerms() throws IOException {
+    private static void findUsageFrequencyInDefinitions() throws IOException {
         Map<String, Integer> usageCount = new HashMap<>();
         List<IWord> wordList = dictAsList(dict);
         for (IWord w: wordList) {
@@ -59,7 +59,7 @@ public class Main {
                 usageCount.put(s, count + 1);
             }
         }
-        FileWriter fr = new FileWriter(new File("usageFrequencyResults.csv"), true);
+        FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), true);
         System.out.println("\nResults:");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
             String line = entry.getKey() + ", " + entry.getValue();
@@ -109,8 +109,8 @@ public class Main {
             for (int i = 0; i < maxCycleLength - 1; i++) {
                 cycleCounts.add(0);
             }
-            for (IIndexWord indexWord0 : wordList) {  // should rename to indexWord1 at some point, and shift later names accordingly
-                for (IWordID wordID : indexWord0.getWordIDs()) {
+            for (IIndexWord indexWord : wordList) {
+                for (IWordID wordID : indexWord.getWordIDs()) {
                     firstDef = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
                     recursivelyFindCycles(firstDef, List.of(w), List.of(wordID.getPOS().toString()), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
                 }
@@ -200,7 +200,7 @@ public class Main {
 
         int count = 0;
         for(int i = 0; i < numTimes; i++){
-            Map<String, String> expandedWords = new HashMap<>(); // keeping as HashMap because plan to use the value of a pair to store it's parent word
+            Map<String, String> expandedWords = new HashMap<>();
             expandedAndPendingWords = new HashSet<>();
             String startingWord;
 
@@ -226,7 +226,7 @@ public class Main {
             }
 
             int totalIters = 0;
-            while (!wordList.isEmpty() /*&& totalIters < 20*/ ){
+            while (!wordList.isEmpty()){
                 IIndexWord[] pair = wordList.remove(0);
                 IIndexWord idxWord = pair[0];
                 expandedWords.put(idxWord.getLemma(), pair[1] == null ? null : pair[1].getLemma());
@@ -304,7 +304,6 @@ public class Main {
         while (tokenizer.hasMoreTokens()){
             result.add(tokenizer.nextToken());
         }
-        //System.out.println(result);
         return result;
     }
 
