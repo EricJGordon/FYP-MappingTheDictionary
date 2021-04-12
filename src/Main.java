@@ -76,16 +76,18 @@ public class Main {
             for (String stem: stemmer.findStems(lemma, pos)){
                 IIndexWord idxWord = dict.getIndexWord(stem, pos);
                 if (idxWord != null) {
-                    if (stem.equals(lemma) && !stopwords.contains(idxWord.getLemma())&& rank < 4) {
+                    boolean stemmed = !stem.equals(lemma);
+                    boolean stopword = stopwords.contains(idxWord.getLemma());
+                    if (!stemmed && !stopword && rank < 4) {
                         rank = 4;
                     }
-                    if (!stem.equals(lemma) && rank < 3) {
+                    if (stemmed && rank < 3) {
                         rank = 3;
                     }
-                    if (stopwords.contains(idxWord.getLemma()) && rank < 2) {
+                    if (stopword && rank < 2) {
                         rank = 2;
                     }
-                    if (stopwords.contains(idxWord.getLemma()) && !stem.equals(lemma) && rank < 1) {
+                    if (stopword && stemmed && rank < 1) {
                         rank = 1;
                     }
                 }
