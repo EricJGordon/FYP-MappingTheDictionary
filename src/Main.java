@@ -29,7 +29,7 @@ public class Main {
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
-        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Usage Frequency (in definitions)");
+        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Usage Frequency (in definitions)\n4 - Status of word (in WordNet)");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -40,6 +40,10 @@ public class Main {
                 break;
             case "3":
                 findUsageFrequencyInDefinitions();
+                break;
+            case "4":
+                System.out.println("Word?");
+                System.out.println(statusInWordNet(in.nextLine()));
                 break;
         }
     }
