@@ -71,7 +71,7 @@ public class Main {
 
     private static String statusInWordNet(String lemma){
         String[] statuses = {"invalid", "valid (but stopword and stemmed)", "valid (but stopword)", "valid (but stemmed)", "valid"};
-        int rank = 0;
+        int rank = 0; // When a lemma can lead to multiple statuses/ranks, the "highest" possible one is the one returned
         for (POS pos : POS.values()) {
             for (String stem: stemmer.findStems(lemma, pos)){
                 IIndexWord idxWord = dict.getIndexWord(stem, pos);
@@ -81,10 +81,10 @@ public class Main {
                     if (!stemmed && !stopword && rank < 4) {
                         rank = 4;
                     }
-                    if (stemmed && rank < 3) {
+                    if (stemmed && !stopword && rank < 3) {
                         rank = 3;
                     }
-                    if (stopword && rank < 2) {
+                    if (stopword && !stemmed  && rank < 2) {
                         rank = 2;
                     }
                     if (stopword && stemmed && rank < 1) {
