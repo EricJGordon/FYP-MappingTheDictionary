@@ -62,11 +62,36 @@ public class Main {
         FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), true);
         System.out.println("\nResults:");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
-            String line = entry.getKey() + ", " + entry.getValue();
+            String line = entry.getKey() + ", " + entry.getValue() + ", " + statusInWordNet(entry.getKey());
             System.out.println(line);
             fr.write(line + "\n");
         }
         fr.close();
+    }
+
+    private static String statusInWordNet(String lemma){
+        String[] statuses = {"invalid", "valid (but stopword and stemmed)", "valid (but stopword)", "valid (but stemmed)", "valid"};
+        int rank = 0;
+        for (POS pos : POS.values()) {
+            for (String stem: stemmer.findStems(lemma, pos)){
+                IIndexWord idxWord = dict.getIndexWord(stem, pos);
+                if (idxWord != null) {
+                    if (stem.equals(lemma) && !stopwords.contains(idxWord.getLemma())&& rank < 4) {
+                        rank = 4;
+                    }
+                    if (!stem.equals(lemma) && rank < 3) {
+                        rank = 3;
+                    }
+                    if (stopwords.contains(idxWord.getLemma()) && rank < 2) {
+                        rank = 2;
+                    }
+                    if (stopwords.contains(idxWord.getLemma()) && !stem.equals(lemma) && rank < 1) {
+                        rank = 1;
+                    }
+                }
+            }
+        }
+        return statuses[rank];
     }
 
     private static void findCycles() {
