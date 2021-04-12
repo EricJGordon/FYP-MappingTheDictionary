@@ -83,8 +83,8 @@ public class Main {
                     if (printStems) {
                         System.out.println(idxWord.getLemma());
                     }
-                    boolean stemmed = !stem.equals(lemma);
-                    boolean stopword = stopwords.contains(lemma);
+                    boolean stemmed = !stem.equals(lemma.toLowerCase());
+                    boolean stopword = stopwords.contains(lemma.toLowerCase());
                     if (!stemmed && !stopword && rank < 4) {
                         rank = 4;
                     }
