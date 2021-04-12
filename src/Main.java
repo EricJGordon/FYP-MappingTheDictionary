@@ -43,7 +43,7 @@ public class Main {
                 break;
             case "4":
                 System.out.println("Word?");
-                System.out.println(statusInWordNet(in.nextLine()));
+                System.out.println(statusInWordNet(in.nextLine(), true));
                 break;
         }
     }
@@ -66,22 +66,25 @@ public class Main {
         FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), true);
         System.out.println("\nResults:");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
-            String line = entry.getKey() + ", " + entry.getValue() + ", " + statusInWordNet(entry.getKey());
+            String line = entry.getKey() + ", " + entry.getValue() + ", " + statusInWordNet(entry.getKey(), false);
             System.out.println(line);
             fr.write(line + "\n");
         }
         fr.close();
     }
 
-    private static String statusInWordNet(String lemma){
+    private static String statusInWordNet(String lemma, boolean printStems){
         String[] statuses = {"invalid", "valid (but stopword and stemmed)", "valid (but stopword)", "valid (but stemmed)", "valid"};
         int rank = 0; // When a lemma can lead to multiple statuses/ranks, the "highest" possible one is the one returned
         for (POS pos : POS.values()) {
             for (String stem: stemmer.findStems(lemma, pos)){
                 IIndexWord idxWord = dict.getIndexWord(stem, pos);
                 if (idxWord != null) {
+                    if (printStems) {
+                        System.out.println(idxWord.getLemma());
+                    }
                     boolean stemmed = !stem.equals(lemma);
-                    boolean stopword = stopwords.contains(idxWord.getLemma());
+                    boolean stopword = stopwords.contains(lemma);
                     if (!stemmed && !stopword && rank < 4) {
                         rank = 4;
                     }
