@@ -57,7 +57,7 @@ public class Main {
         Set<ISynset> uniqueSynsets = new HashSet<>();
         wordList.forEach((word) -> uniqueSynsets.add(word.getSynset()));
         for (ISynset synset: uniqueSynsets){           // so as not to repeat the exact same definition multiple times for each member of the synset
-            List<String> definition = definitionToList(synset.getGloss());
+            List<String> definition = definitionToList(synset.getGloss(), true);
             for (String s: definition) {
                 int count = usageCount.getOrDefault(s, 0);
                 usageCount.put(s, count + 1);
@@ -329,11 +329,12 @@ public class Main {
         }
     }
 
-    private static List<String> definitionToList(String s){
-        String punctuation = "[!._,'@?;(): ]";
-        String glossOnly = s.split("\"")[0];
-        //excludes example sentences
-        StringTokenizer tokenizer = new StringTokenizer(glossOnly, punctuation);
+    private static List<String> definitionToList(String s, boolean excludeExampleSentences){
+        String punctuation = "[!._,'@?;():\" ]";
+        if (excludeExampleSentences){
+            s = s.split("\"")[0];
+        }
+        StringTokenizer tokenizer = new StringTokenizer(s, punctuation);
         List<String> result = new ArrayList<>();
         while (tokenizer.hasMoreTokens()){
             result.add(tokenizer.nextToken());
@@ -345,7 +346,7 @@ public class Main {
 
         List<IIndexWord> validUnseenWords = new ArrayList<>();
         int count = 0;
-        for (String s : definitionToList(word.getSynset().getGloss())) {
+        for (String s : definitionToList(word.getSynset().getGloss(), true)) {
             for (char c : pos.toCharArray()) {
                 for (String stem: stemmer.findStems(s, POS.getPartOfSpeech(c))){
                     IIndexWord idxWord = dict.getIndexWord(stem, POS.getPartOfSpeech(c));
