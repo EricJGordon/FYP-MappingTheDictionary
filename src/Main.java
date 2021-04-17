@@ -57,13 +57,13 @@ public class Main {
         Set<ISynset> uniqueSynsets = new HashSet<>();
         wordList.forEach((word) -> uniqueSynsets.add(word.getSynset()));
         for (ISynset synset: uniqueSynsets){           // so as not to repeat the exact same definition multiple times for each member of the synset
-            List<String> definition = definitionToList(synset.getGloss(), true);
+            List<String> definition = definitionToList(synset.getGloss(), false);
             for (String s: definition) {
                 int count = usageCount.getOrDefault(s, 0);
                 usageCount.put(s, count + 1);
             }
         }
-        FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), true);
+        FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), false);
         System.out.println("\nResults:");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
             String line = entry.getKey() + ", " + entry.getValue() + ", " + statusInWordNet(entry.getKey(), false);
