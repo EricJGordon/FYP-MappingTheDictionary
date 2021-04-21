@@ -66,7 +66,9 @@ public class Main {
         FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), false);
         System.out.println("\nResults:");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
-            String line = entry.getKey() + ", " + entry.getValue() + ", " + statusInWordNet(entry.getKey(), false);
+            String w = entry.getKey();
+            boolean excluded = w.contains("_");
+            String line = w + ", " + entry.getValue() + ", " + statusInWordNet(w, false) + ", " + excluded;
             System.out.println(line);
             fr.write(line + "\n");
         }
