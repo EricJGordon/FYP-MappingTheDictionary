@@ -29,7 +29,12 @@ public class Main {
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
-        System.out.println("Choose: \n1 - Recursive Expansion\n2 - Finding n-cycles\n3 - Finding Usage Frequency (in definitions)\n4 - Status of word (in WordNet)");
+        System.out.println("Choose: \n" +
+                "1 - Recursive Expansion\n" +
+                "2 - Finding n-cycles\n" +
+                "3 - Finding Usage Frequency (in definitions)\n" +
+                "4 - Status of word (in WordNet)\n" +
+                "5 - Test definitionToList() on a given lemma\n");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -44,6 +49,20 @@ public class Main {
             case "4":
                 System.out.println("Word?");
                 System.out.println(statusInWordNet(in.nextLine(), true));
+                break;
+            case "5":
+                System.out.println("Word?");
+                String w = in.nextLine();
+                for (POS p : POS.values()) {
+                    IIndexWord idxWord = dict.getIndexWord(w, p);
+                    if (idxWord != null ) {
+                        for (IWordID wordID: idxWord.getWordIDs()){
+                            String def = dict.getWord(wordID).getSynset().getGloss();
+                            System.out.println(def);
+                            System.out.println(definitionToList(def, false));
+                        }
+                    }
+                }
                 break;
         }
     }
