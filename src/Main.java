@@ -30,11 +30,12 @@ public class Main {
         stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
         System.out.println("Choose: \n" +
-                "1 - Recursive Expansion\n" +
+                "1 - Recursive expansion\n" +
                 "2 - Finding n-cycles\n" +
-                "3 - Finding Usage Frequency (in definitions)\n" +
-                "4 - Status of word (in WordNet)\n" +
-                "5 - Test definitionToList() on a given lemma\n");
+                "3 - Getting total usage frequency\n" +
+                "4 - Checking the status of a given word (in WordNet)\n" +
+                "5 - Testing definitionToList() on a given word\n" +   // mostly just for easier debugging
+                "6 - Finding definitions that a given word is used in\n");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -61,6 +62,19 @@ public class Main {
                             System.out.println(def);
                             System.out.println(definitionToList(def, false));
                         }
+                    }
+                }
+                break;
+            case "6":
+                System.out.println("Word?");
+                String targetWord = in.nextLine();
+                List<IWord> wordList = dictAsList(dict);
+                Set<ISynset> uniqueSynsets = new HashSet<>();
+                wordList.forEach((word) -> uniqueSynsets.add(word.getSynset()));
+                for (ISynset synset: uniqueSynsets){
+                    if (synset.getGloss().contains(targetWord)){
+                        System.out.println(synset.getWords());
+                        System.out.println(synset.getGloss());
                     }
                 }
                 break;
