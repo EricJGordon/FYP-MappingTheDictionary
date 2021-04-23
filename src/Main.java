@@ -29,6 +29,12 @@ public class Main {
         stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
         stemmer = new WordnetStemmer(dict);
         in = new Scanner(System.in);
+        while(true){
+            selectFunction();
+        }
+    }
+
+    private static void selectFunction() throws IOException {
         System.out.println("Choose: \n" +
                 "1 - Recursive expansion\n" +
                 "2 - Finding n-cycles\n" +
