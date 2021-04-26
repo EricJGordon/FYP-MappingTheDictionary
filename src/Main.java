@@ -84,6 +84,18 @@ public class Main {
                     }
                 }
                 break;
+            case "7":
+                System.out.println("Edge cases");
+                for (IWord word: dictAsList(dict)){
+                    List<String> list = definitionToList(word.getSynset().getGloss(), false);
+                    for (String s: list){
+                        if (!Character.isLetter(s.charAt(0))) {
+                            System.out.println(s.charAt(0) + " - " + s);
+                        } // to exclude all of these
+                    }
+                }
+                break;
+
         }
     }
 
