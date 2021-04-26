@@ -88,11 +88,21 @@ public class Main {
                 System.out.println("Edge cases");
                 for (IWord word: dictAsList(dict)){
                     List<String> list = definitionToList(word.getSynset().getGloss(), false);
-                    for (String s: list){
+                    for (String s: list) {
                         if (!Character.isLetter(s.charAt(0))) {
-                            System.out.println(s.charAt(0) + " - " + s);
-                        } // to exclude all of these
-                    }
+                            //System.out.println(s.charAt(0) + " - " + s);
+                        } else{
+                            for (char ch: s.toCharArray()){
+                                if (!Character.isLetter(ch) && ch!='-'){
+                                    System.out.print(" --- " + ch + " : " + s + " : ");
+                                    System.out.println(statusInWordNet(s, true));
+
+                                }
+                            }
+                        }
+                    } // Conclusions: Disallow any 'word' not starting with a letter,
+                    // allow words to contain dashes and numbers, but not forward slashes, pluses, and equals signs
+                    // For those instead replace them with a space first. Similarly replace back tick with apostrophe?
                 }
                 break;
 
