@@ -86,16 +86,25 @@ public class Main {
                 break;
             case "7":
                 System.out.println("Edge cases");
+                int val=0, inval=0, other=0;
                 for (IWord word: dictAsList(dict)){
                     List<String> list = definitionToList(word.getSynset().getGloss(), false);
                     for (String s: list) {
-                        if (!Character.isLetter(s.charAt(0))) {
-                            //System.out.println(s.charAt(0) + " - " + s);
+                        if (!Character.isLetter(s.charAt(0)) && s.charAt(0)!='`' && s.charAt(0)!='-') {
+                            System.out.println(s.charAt(0) + " - " + s);
+                            //System.out.println(statusInWordNet(s, true));
+                            if (statusInWordNet(s, false).equals("valid")){
+                                val++;
+                            } else if (statusInWordNet(s, false).equals("invalid")) {
+                                inval++;
+                            } else {
+                                other++;
+                            }
                         } else{
                             for (char ch: s.toCharArray()){
                                 if (!Character.isLetter(ch) && ch!='-'){
-                                    System.out.print(" --- " + ch + " : " + s + " : ");
-                                    System.out.println(statusInWordNet(s, true));
+                                    //System.out.print(" --- " + ch + " : " + s + " : ");
+                                    //System.out.println(statusInWordNet(s, true));
 
                                 }
                             }
@@ -104,6 +113,7 @@ public class Main {
                     // allow words to contain dashes and numbers, but not forward slashes, pluses, and equals signs
                     // For those instead replace them with a space first. Similarly replace back tick with apostrophe?
                 }
+                System.out.println(val + ", " + inval + ", " + other);
                 break;
 
         }
@@ -126,6 +136,7 @@ public class Main {
         }
         FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), false);
         System.out.println("\nResults:");
+        fr.write("word, frequency, status, excluded\n");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
             String w = entry.getKey();
             boolean excluded = w.contains("_");
@@ -393,14 +404,18 @@ public class Main {
     }
 
     private static List<String> definitionToList(String s, boolean excludeExampleSentences){
-        String punctuation = "[!._,'@?;():\" ]";
+        String punctuation = "[!._,'@?;():\"/+= ]";
+        // TODO: Rethink how apostrophes are handled?
         if (excludeExampleSentences){
             s = s.split("\"")[0];
         }
         StringTokenizer tokenizer = new StringTokenizer(s, punctuation);
         List<String> result = new ArrayList<>();
         while (tokenizer.hasMoreTokens()){
-            result.add(tokenizer.nextToken());
+            String word = tokenizer.nextToken();
+            if (Character.isLetter(word.charAt(0))) {
+                result.add(word);
+            }
         }
         return result;
     }
