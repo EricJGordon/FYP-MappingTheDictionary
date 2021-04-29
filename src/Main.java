@@ -403,6 +403,18 @@ public class Main {
         }
     }
 
+    private static boolean containsOrContainsStemmed(Set<String> set, String lemma){
+        for (POS pos : POS.values()) {
+            for (String stem: stemmer.findStems(lemma, pos)){
+                IIndexWord idxWord = dict.getIndexWord(stem, pos);
+                if (idxWord != null && set.contains(idxWord.getLemma())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static List<String> definitionToList(String s, boolean excludeExampleSentences){
         String punctuation = "[!._,'@?;():\"/+= ]";
         // TODO: Rethink how apostrophes are handled?
