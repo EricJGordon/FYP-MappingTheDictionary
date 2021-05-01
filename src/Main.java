@@ -370,6 +370,13 @@ public class Main {
         fr1.close();
         fr2.close();
 
+        for (Map<String, String> r: result){
+            checkDefinitionCoverage(r.keySet());
+        }
+        Set<String> set = Set.copyOf(Files.readAllLines(Paths.get("1000words.txt")));
+        System.out.print("For comparison: ");
+        checkDefinitionCoverage(set);
+
         if (result.size() == 2){    //when only two words are examined, directly compare and contrast their results
             Map<String, String> first = result.get(0);
             Map<String, String> second = result.get(1);
@@ -401,6 +408,30 @@ public class Main {
                 input = in.nextLine();
             }
         }
+    }
+
+    private static void checkDefinitionCoverage(Set<String> set){
+
+        boolean covered;
+        int countCovered = 0;
+        List<IWord> wordList = dictAsList(dict);
+        Set<ISynset> uniqueSynsets = new HashSet<>();
+        wordList.forEach((word) -> uniqueSynsets.add(word.getSynset()));
+        for (ISynset synset: uniqueSynsets){
+            List<String> definition = definitionToList(synset.getGloss(), true);
+            covered = true;
+            for (String s: definition) {
+                if (!containsOrContainsStemmed(set, s) && !stopwords.contains(s) /*|| statusInWordNet(s, false).equals("invalid")*/){
+                    covered = false;
+                    break;
+                }
+            }
+            if (covered){
+                countCovered++;
+            }
+        }
+        System.out.println(countCovered + " out of " + uniqueSynsets.size() + " definitions are covered.");
+
     }
 
     private static boolean containsOrContainsStemmed(Set<String> set, String lemma){
