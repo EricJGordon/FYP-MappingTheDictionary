@@ -41,7 +41,8 @@ public class Main {
                 "3 - Getting total usage frequency\n" +
                 "4 - Checking the status of a given word (in WordNet)\n" +
                 "5 - Testing definitionToList() on a given word\n" +   // mostly just for easier debugging
-                "6 - Finding definitions that a given word is used in\n");
+                "6 - Finding definitions that a given word is used in\n" +
+                "7 - Finding punctuation edge cases\n");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -117,6 +118,7 @@ public class Main {
                 break;
 
         }
+        System.out.println();
     }
 
     private static void findUsageFrequencyInDefinitions() throws IOException {
@@ -259,8 +261,8 @@ public class Main {
     }
 
     private static void recursivelyExpandDefinitions() throws IOException {
-        ArrayList<Map<String, String>> result = new ArrayList<>();
-        ArrayList<String> userWords = new ArrayList<>();
+        List<Map<String, String>> result = new ArrayList<>();
+        List<String> userWords = new ArrayList<>();
         List<IWord> completeList;
         List<IWord> randomList = null;
         String pos = null;
@@ -273,7 +275,6 @@ public class Main {
         boolean usePresets = answer.equals("y") || answer.equals("Y");
 
         if (usePresets) {
-            //TODO: Check if switch to RamDict had effect on these results too
             System.out.println("Getting random words:\n-------------------");
             completeList = dictAsList(dict);
             randomList = new ArrayList<>();
