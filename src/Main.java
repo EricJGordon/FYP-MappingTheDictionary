@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 public class Main {
 
     private static IRAMDictionary dict;
@@ -84,8 +86,37 @@ public class Main {
                     }
                 }
                 break;
+            case "7":
+                examineSpecificity();
+                break;
         }
         System.out.println();
+    }
+
+    private static void examineSpecificity() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("usageFrequencyInDefinitions.csv"));
+        Map<String, Integer> frequencies = new HashMap<>();
+        lines = lines.subList(1, lines.size() - 1);
+        for (String line: lines){
+            String[] arr = line.split(", ");
+            frequencies.put(arr[0], Integer.parseInt(arr[1]));
+        }
+        System.out.println("Word?");
+        String targetWord = in.nextLine();
+        for (POS p : POS.values()) {
+            IIndexWord idxWord = dict.getIndexWord(targetWord, p);
+            if (idxWord != null ) {
+                for (IWordID wordID: idxWord.getWordIDs()){
+                    String def = dict.getWord(wordID).getSynset().getGloss();
+                    System.out.println("Original = " + frequencies.get(targetWord));
+                    List<Integer> list = definitionToList(def, false).stream().map(frequencies::get).collect(toList());
+                    System.out.println(list);
+                    // TODO: exclude stopwords from average, combine averages for all senses/glosses of a word
+                    System.out.println("Average = " + list.stream().reduce(0, Integer::sum)/list.size());
+
+                }
+            }
+        }
     }
 
     private static void findUsageFrequencyInDefinitions() throws IOException {
