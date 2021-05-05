@@ -105,11 +105,13 @@ public class Main {
         }
         FileWriter fr = new FileWriter(new File("usageFrequencyInDefinitions.csv"), false);
         System.out.println("\nResults:");
-        fr.write("word, frequency, status, excluded\n");
+        fr.write("word, frequency, status, multiword, capitalised\n");
         for (Map.Entry<String, Integer> entry : usageCount.entrySet()){
             String w = entry.getKey();
-            boolean excluded = w.contains("_");
-            String line = w + ", " + entry.getValue() + ", " + statusInWordNet(w, false) + ", " + excluded;
+            boolean isMultiWord = w.contains("_");
+            boolean isCapitalised = w.length() > 1 && Character.isUpperCase(w.charAt(0)) && w.charAt(1) != '-';
+            // make exceptions for words where it's a capital letter followed by a hyphen, e.g. X-ray, D-day, H-bomb
+            String line = w + ", " + entry.getValue() + ", " + statusInWordNet(w, false) + ", " + isMultiWord + ", " + isCapitalised;
             System.out.println(line);
             fr.write(line + "\n");
         }
