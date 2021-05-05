@@ -41,8 +41,7 @@ public class Main {
                 "3 - Getting total usage frequency\n" +
                 "4 - Checking the status of a given word (in WordNet)\n" +
                 "5 - Testing definitionToList() on a given word\n" +   // mostly just for easier debugging
-                "6 - Finding definitions that a given word is used in\n" +
-                "7 - Finding punctuation edge cases\n");
+                "6 - Finding definitions that a given word is used in\n");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -85,38 +84,6 @@ public class Main {
                     }
                 }
                 break;
-            case "7":
-                System.out.println("Edge cases");
-                int val=0, inval=0, other=0;
-                for (IWord word: dictAsList(dict)){
-                    List<String> list = definitionToList(word.getSynset().getGloss(), false);
-                    for (String s: list) {
-                        if (!Character.isLetter(s.charAt(0)) && s.charAt(0)!='`' && s.charAt(0)!='-') {
-                            System.out.println(s.charAt(0) + " - " + s);
-                            //System.out.println(statusInWordNet(s, true));
-                            if (statusInWordNet(s, false).equals("valid")){
-                                val++;
-                            } else if (statusInWordNet(s, false).equals("invalid")) {
-                                inval++;
-                            } else {
-                                other++;
-                            }
-                        } else{
-                            for (char ch: s.toCharArray()){
-                                if (!Character.isLetter(ch) && ch!='-'){
-                                    //System.out.print(" --- " + ch + " : " + s + " : ");
-                                    //System.out.println(statusInWordNet(s, true));
-
-                                }
-                            }
-                        }
-                    } // Conclusions: Disallow any 'word' not starting with a letter,
-                    // allow words to contain dashes and numbers, but not forward slashes, pluses, and equals signs
-                    // For those instead replace them with a space first. Similarly replace back tick with apostrophe?
-                }
-                System.out.println(val + ", " + inval + ", " + other);
-                break;
-
         }
         System.out.println();
     }
@@ -448,17 +415,22 @@ public class Main {
     }
 
     private static List<String> definitionToList(String s, boolean excludeExampleSentences){
-        String punctuation = "[!._,'@?;():\"/+= ]";
-        // TODO: Rethink how apostrophes are handled?
+        String punctuation = "[!._,@?;():\"/+= ]";
         if (excludeExampleSentences){
             s = s.split("\"")[0];
         }
+        s = s.replace('`', '\'');   // standardise use of apostrophes instead of it sometimes being a backtick
         StringTokenizer tokenizer = new StringTokenizer(s, punctuation);
         List<String> result = new ArrayList<>();
         while (tokenizer.hasMoreTokens()){
             String word = tokenizer.nextToken();
             if (Character.isLetter(word.charAt(0))) {
                 result.add(word);
+            } else if (word.charAt(0)=='\'' && word.length() > 2 && word.charAt(word.length()-1)=='\''){
+                // if word is encased in single quotes, do add that word, but only after stripping away the single quotes
+                // It's handled this way instead of including apostrophes in the general list of punctuation to split on
+                // so that contractions with apostrophes (e.g. "didn't") are still treated as one word
+                result.add(word.substring(1, word.length()-1));
             }
         }
         return result;
