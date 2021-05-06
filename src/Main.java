@@ -467,14 +467,13 @@ public class Main {
         List<String> result = new ArrayList<>();
         while (tokenizer.hasMoreTokens()){
             String word = tokenizer.nextToken();
-            if (Character.isLetter(word.charAt(0))) {
+            // apostrophes and dashes are allowed within words but not on their edges
+            if (word.charAt(0) == '\'' || word.charAt(0) == '-')
+                word = word.substring(1);
+            if (word.length() > 0 && (word.charAt(word.length()-1) == '\'' || word.charAt(word.length()-1) == '-'))
+                word = word.substring(0, word.length()-1);
+            if (word.length() > 0 && (Character.isLetter(word.charAt(0)) && Character.isLetter(word.charAt(word.length()-1))))
                 result.add(word);
-            } else if (word.charAt(0)=='\'' && word.length() > 2 && word.charAt(word.length()-1)=='\''){
-                // if word is encased in single quotes, do add that word, but only after stripping away the single quotes
-                // It's handled this way instead of including apostrophes in the general list of punctuation to split on
-                // so that contractions with apostrophes (e.g. "didn't") are still treated as one word
-                result.add(word.substring(1, word.length()-1));
-            }
         }
         return result;
     }
