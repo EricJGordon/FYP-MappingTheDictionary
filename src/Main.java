@@ -126,7 +126,7 @@ public class Main {
 
         FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
         if (!individualQuery){
-            fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general, is-single-sense\n");
+            fr.write("parent-word, parent-word-frequency, average-frequency-of-definition-words, definition-is-more-general, is-single-sense\n");
         }
         for (String currentWord: wordList){
             int runningTotalAcrossAllSensesOfWord = 0;
