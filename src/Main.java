@@ -104,6 +104,10 @@ public class Main {
         }
         System.out.println("Word?");
         String targetWord = in.nextLine();
+        FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
+        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions\n");
+        int runningTotalAcrossAllSensesOfWord = 0;
+        int totalNumSenses = 0;
         for (POS p : POS.values()) {
             IIndexWord idxWord = dict.getIndexWord(targetWord, p);
             if (idxWord != null ) {
@@ -113,16 +117,24 @@ public class Main {
                     List<Integer> list = definitionToList(def, false).stream().map(frequencies::get).collect(toList());
                     System.out.println(def);
                     System.out.println(list);
-                    // TODO: combine averages for all senses/glosses of a word?
                     List<String> listWithoutStopwords = definitionToList(def, false).stream()
                             .filter(Main::isNotStopword)
                             .collect(toList());
-                    System.out.println("Average including stopwords = " + list.stream().reduce(0, Integer::sum)/list.size());
-                    System.out.println("Average excluding stopwords = " + listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size());
-
+                    int averageWithStopwords = list.stream().reduce(0, Integer::sum)/list.size();
+                    int averageWithoutStopwords = listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size();
+                    System.out.println("Average including stopwords = " + averageWithStopwords);
+                    System.out.println("Average excluding stopwords = " + averageWithoutStopwords);
+                    runningTotalAcrossAllSensesOfWord += averageWithoutStopwords;
+                    totalNumSenses++;
                 }
             }
         }
+        int averageAcrossAllSensesOfWord =  runningTotalAcrossAllSensesOfWord/totalNumSenses;
+        String line = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord;
+        System.out.println(line);
+        fr.write(line + "\n");
+
+        fr.close();
     }
 
     private static void findUsageFrequencyInDefinitions() throws IOException {
