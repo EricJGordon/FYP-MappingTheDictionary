@@ -63,13 +63,16 @@ public class Main {
             case "5":
                 System.out.println("Word?");
                 String w = in.nextLine();
+                System.out.println("Exclude example sentences?");
+                String response = in.nextLine();
+                boolean exclude = response.equals("y") || response.equals("Y");
                 for (POS p : POS.values()) {
                     IIndexWord idxWord = dict.getIndexWord(w, p);
                     if (idxWord != null ) {
                         for (IWordID wordID: idxWord.getWordIDs()){
                             String def = dict.getWord(wordID).getSynset().getGloss();
                             System.out.println(def);
-                            System.out.println(definitionToList(def, false));
+                            System.out.println(definitionToList(def, exclude));
                         }
                     }
                 }
@@ -482,7 +485,7 @@ public class Main {
     private static List<String> definitionToList(String s, boolean excludeExampleSentences){
         String punctuation = "[!._,@?;():\"/+= ]";
         if (excludeExampleSentences){
-            s = s.split("\"")[0];
+            s = s.split("; \"")[0];
         }
         s = s.replace('`', '\'');   // standardise use of apostrophes instead of it sometimes being a backtick
         StringTokenizer tokenizer = new StringTokenizer(s, punctuation);
