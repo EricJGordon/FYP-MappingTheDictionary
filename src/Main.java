@@ -43,7 +43,8 @@ public class Main {
                 "3 - Getting total usage frequency\n" +
                 "4 - Checking the status of a given word (in WordNet)\n" +
                 "5 - Testing definitionToList() on a given word\n" +   // mostly just for easier debugging
-                "6 - Finding definitions that a given word is used in\n");
+                "6 - Finding definitions that a given word is used in\n" +
+                "7 - Examine Specificity of words (i.e. comparing frequencies)\n");
         String answer = in.nextLine();
         switch (answer) {
             case "1":
@@ -107,12 +108,17 @@ public class Main {
             IIndexWord idxWord = dict.getIndexWord(targetWord, p);
             if (idxWord != null ) {
                 for (IWordID wordID: idxWord.getWordIDs()){
-                    String def = dict.getWord(wordID).getSynset().getGloss();
+                    String def = dict.getWord(wordID).getSynset().getGloss().split("\"")[0]; // exclude example sentences
                     System.out.println("Original = " + frequencies.get(targetWord));
                     List<Integer> list = definitionToList(def, false).stream().map(frequencies::get).collect(toList());
+                    System.out.println(def);
                     System.out.println(list);
-                    // TODO: exclude stopwords from average, combine averages for all senses/glosses of a word
-                    System.out.println("Average = " + list.stream().reduce(0, Integer::sum)/list.size());
+                    // TODO: combine averages for all senses/glosses of a word?
+                    List<String> listWithoutStopwords = definitionToList(def, false).stream()
+                            .filter(Main::isNotStopword)
+                            .collect(toList());
+                    System.out.println("Average including stopwords = " + list.stream().reduce(0, Integer::sum)/list.size());
+                    System.out.println("Average excluding stopwords = " + listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size());
 
                 }
             }
@@ -177,6 +183,10 @@ public class Main {
             }
         }
         return statuses[rank];
+    }
+
+    private static boolean isNotStopword(String lemma){
+        return statusInWordNet(lemma, false).equals("valid") || statusInWordNet(lemma, false).equals("valid (but stemmed)");
     }
 
     private static void findCycles() {
