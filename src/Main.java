@@ -198,7 +198,7 @@ public class Main {
             String w = entry.getKey();
             boolean isMultiWord = w.contains("_");
             boolean isCapitalised = w.length() > 1 && Character.isUpperCase(w.charAt(0)) && w.charAt(1) != '-';
-            // make exceptions for words where it's a capital letter followed by a hyphen, e.g. X-ray, D-day, H-bomb
+            // exceptions made for words where it's a capital letter followed by a hyphen, e.g. X-ray, D-day, H-bomb
             String line = w + ", " + entry.getValue() + ", " + statusInWordNet(w, false) + ", " + isMultiWord + ", " + isCapitalised;
             System.out.println(line);
             fr.write(line + "\n");
@@ -240,53 +240,69 @@ public class Main {
         return !statusInWordNet(lemma, false).equals("valid (but stopword)") && !statusInWordNet(lemma, false).equals("valid (but stopword and stemmed)");
     }
 
-    private static void findCycles() {
-        List<IWord> completeList = new ArrayList<>(dictAsList(dict));
-        Collections.shuffle(completeList);
-        List<IIndexWord> firstDef;
-        in = new Scanner(System.in);
-        System.out.println("Manually input words? (y/n)");
+    private static void findCycles() throws IOException {
+        System.out.println("Is this an individual query? (y/n)");
         String answer = in.nextLine();
-        boolean manuallyInputWords = answer.equals("y") || answer.equals("Y");
-        /*boolean promptAfterEach = false;
-        if (!manuallyInputWords) {
-            System.out.println("Prompt after each found cycle? (y/n)");
-            answer = in.nextLine();
-            promptAfterEach = answer.equals("y") || answer.equals("Y");
-        }*/
+        boolean individualQuery = answer.equals("y") || answer.equals("Y");
+        List<String> wordList;
+        if (individualQuery) {
+            System.out.println("Word?");
+            String targetWord = in.nextLine();
+            wordList = new ArrayList<>(Collections.singletonList(targetWord));
+        } else{
+            List<IWord> dictList = dictAsList(dict);
+            Set<String> uniqueLemmas = new HashSet<>();
+            dictList.forEach((word) -> uniqueLemmas.add(word.getLemma()));
+            wordList = new ArrayList<>(uniqueLemmas);
+        }
+
+        List<IIndexWord> firstDef;
         System.out.println("Max length of cycle to consider?");
         int maxCycleLength = in.nextInt();
         in.nextLine();
-        System.out.println("(Ready)\n--------------------");
-        for (IWord iWord : completeList) {  // using this instead of a set of unique lemmas so that lemmas with more senses
-                                            // have a likelihood of being chosen proportional to their amount of senses
-            String w;
-            if (manuallyInputWords) {
-                System.out.println("Next Word?");
-                w = in.nextLine();
-            } else {
-                w = iWord.getLemma();
+        FileWriter fr = new FileWriter(new File("cycleResults.csv"), false);
+        if (!individualQuery){
+            String headers = "words, multiword, capitalised";
+            for (int i = 2; i <= maxCycleLength; i++){
+                headers += ", " + i + "-cycles";
             }
-            List<IIndexWord> wordList = new ArrayList<>();
+            fr.write(headers + "\n");
+        }
+        System.out.println("(Ready)\n--------------------");
+        int count = 0;
+        System.out.println(wordList.size() + " total");
+        for (String w : wordList) {
+            List<IIndexWord> indexWords = new ArrayList<>();
             for (POS p : POS.values()) {
                 IIndexWord idxWord = dict.getIndexWord(w, p);
                 if (idxWord != null ) {
-                    wordList.add(idxWord);
+                    indexWords.add(idxWord);
                 }
             }
             expandedAndPendingWords = new HashSet<>();
             Set<String> cyclesFoundForCurrentLemma = new HashSet<>();
             List<Integer> cycleCounts = new ArrayList<>();
+            boolean isCapitalised = w.length() > 1 && Character.isUpperCase(w.charAt(0)) && w.charAt(1) != '-';
+            // exceptions made for words where it's a capital letter followed by a hyphen, e.g. X-ray, D-day, H-bomb
+
             for (int i = 0; i < maxCycleLength - 1; i++) {
                 cycleCounts.add(0);
             }
-            for (IIndexWord indexWord : wordList) {
-                for (IWordID wordID : indexWord.getWordIDs()) {
-                    firstDef = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
-                    recursivelyFindCycles(firstDef, List.of(w), List.of(wordID.getPOS().toString()), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
+            boolean isMultiWord = w.contains("_");
+            if (!isMultiWord){
+                for (IIndexWord indexWord : indexWords) {
+                    for (IWordID wordID : indexWord.getWordIDs()) {
+                        firstDef = expandDefinitionOfWord(dict.getWord(wordID), "nvar", true);
+                        recursivelyFindCycles(firstDef, List.of(w), List.of(wordID.getPOS().toString()), cyclesFoundForCurrentLemma, cycleCounts,  maxCycleLength - 2);
+                    }
                 }
             }
-            System.out.println(w + " - " + cycleCounts.toString());
+            String result = w + ", " + isMultiWord + ", " + isCapitalised + ", "
+                    + cycleCounts.toString().substring(1, cycleCounts.toString().length() - 1);
+            // substring used to trim off the square brackets on either end
+            count++;
+            System.out.println(count + " - " + result);
+            fr.write(result + "\n");
         }
     }
     private static void recursivelyFindCycles(List<IIndexWord> currentLevelDefs, List<String> comboSoFar, List<String> posSoFar, Set<String> cyclesFoundForCurrentLemma, List<Integer> cycleCounts, int levelsRemaining){
