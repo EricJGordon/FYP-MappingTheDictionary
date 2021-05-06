@@ -104,6 +104,9 @@ public class Main {
         }
         System.out.println("Word?");
         String targetWord = in.nextLine();
+        System.out.println("Show print statements? (y/n)");
+        String answer = in.nextLine();
+        showPrintStatements = answer.equals("y") || answer.equals("Y");
         FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
         fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions\n");
         int runningTotalAcrossAllSensesOfWord = 0;
@@ -113,17 +116,19 @@ public class Main {
             if (idxWord != null ) {
                 for (IWordID wordID: idxWord.getWordIDs()){
                     String def = dict.getWord(wordID).getSynset().getGloss().split("\"")[0]; // exclude example sentences
-                    System.out.println("Original = " + frequencies.get(targetWord));
                     List<Integer> list = definitionToList(def, false).stream().map(frequencies::get).collect(toList());
-                    System.out.println(def);
-                    System.out.println(list);
                     List<String> listWithoutStopwords = definitionToList(def, false).stream()
                             .filter(Main::isNotStopword)
                             .collect(toList());
                     int averageWithStopwords = list.stream().reduce(0, Integer::sum)/list.size();
                     int averageWithoutStopwords = listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size();
-                    System.out.println("Average including stopwords = " + averageWithStopwords);
-                    System.out.println("Average excluding stopwords = " + averageWithoutStopwords);
+                    if (showPrintStatements){
+                        System.out.println("Original = " + frequencies.get(targetWord));
+                        System.out.println(def);
+                        System.out.println(list);
+                        System.out.println("Average including stopwords = " + averageWithStopwords);
+                        System.out.println("Average excluding stopwords = " + averageWithoutStopwords);
+                    }
                     runningTotalAcrossAllSensesOfWord += averageWithoutStopwords;
                     totalNumSenses++;
                 }
