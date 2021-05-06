@@ -108,7 +108,7 @@ public class Main {
         String answer = in.nextLine();
         showPrintStatements = answer.equals("y") || answer.equals("Y");
         FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
-        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions\n");
+        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general\n");
         int runningTotalAcrossAllSensesOfWord = 0;
         int totalNumSenses = 0;
         for (POS p : POS.values()) {
@@ -135,7 +135,8 @@ public class Main {
             }
         }
         int averageAcrossAllSensesOfWord =  runningTotalAcrossAllSensesOfWord/totalNumSenses;
-        String line = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord;
+        String line = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord + ", "
+                + (averageAcrossAllSensesOfWord > frequencies.get(targetWord));
         System.out.println(line);
         fr.write(line + "\n");
 
