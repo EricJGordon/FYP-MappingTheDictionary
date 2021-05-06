@@ -108,7 +108,7 @@ public class Main {
         String answer = in.nextLine();
         showPrintStatements = answer.equals("y") || answer.equals("Y");
         FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
-        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general\n");
+        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general, is-single-sense\n");
         int runningTotalAcrossAllSensesOfWord = 0;
         int totalNumSenses = 0;
         for (POS p : POS.values()) {
@@ -122,12 +122,16 @@ public class Main {
                             .collect(toList());
                     int averageWithStopwords = list.stream().reduce(0, Integer::sum)/list.size();
                     int averageWithoutStopwords = listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size();
+                    String resultRow = targetWord + ", " + frequencies.get(targetWord) + ", " + averageWithoutStopwords + ", "
+                            + (averageWithoutStopwords > frequencies.get(targetWord)) + ", " + true;
+                    fr.write(resultRow + "\n");
                     if (showPrintStatements){
                         System.out.println("Original = " + frequencies.get(targetWord));
                         System.out.println(def);
                         System.out.println(list);
                         System.out.println("Average including stopwords = " + averageWithStopwords);
                         System.out.println("Average excluding stopwords = " + averageWithoutStopwords);
+                        System.out.println(resultRow);
                     }
                     runningTotalAcrossAllSensesOfWord += averageWithoutStopwords;
                     totalNumSenses++;
@@ -135,10 +139,10 @@ public class Main {
             }
         }
         int averageAcrossAllSensesOfWord =  runningTotalAcrossAllSensesOfWord/totalNumSenses;
-        String line = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord + ", "
-                + (averageAcrossAllSensesOfWord > frequencies.get(targetWord));
-        System.out.println(line);
-        fr.write(line + "\n");
+        String resultRow = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord + ", "
+                + (averageAcrossAllSensesOfWord > frequencies.get(targetWord)) + ", " + false;
+        System.out.println(resultRow);
+        fr.write(resultRow + "\n");
 
         fr.close();
     }
