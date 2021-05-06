@@ -100,53 +100,79 @@ public class Main {
     private static void examineSpecificity() throws IOException {
         List<String> lines = Files.readAllLines(Paths.get("usageFrequencyInDefinitions.csv"));
         Map<String, Integer> frequencies = new HashMap<>();
-        lines = lines.subList(1, lines.size() - 1);
+        lines = lines.subList(1, lines.size());
         for (String line: lines){
             String[] arr = line.split(", ");
             frequencies.put(arr[0], Integer.parseInt(arr[1]));
         }
-        System.out.println("Word?");
-        String targetWord = in.nextLine();
-        System.out.println("Show print statements? (y/n)");
+        System.out.println("Is this an individual query? (y/n)");
         String answer = in.nextLine();
-        showPrintStatements = answer.equals("y") || answer.equals("Y");
+        boolean individualQuery = answer.equals("y") || answer.equals("Y");
+        List<String> wordList;
+        if (individualQuery) {
+            showPrintStatements = true;
+            System.out.println("Word?");
+            String targetWord = in.nextLine();
+            wordList = new ArrayList<>(Collections.singletonList(targetWord));
+        } else{
+            System.out.println("Show print statements? (y/n)");
+            answer = in.nextLine();
+            showPrintStatements = answer.equals("y") || answer.equals("Y");
+            List<IWord> dictList = dictAsList(dict);
+            Set<String> uniqueLemmas = new HashSet<>();
+            dictList.forEach((word) -> uniqueLemmas.add(word.getLemma()));
+            wordList = new ArrayList<>(uniqueLemmas);
+        }
+
         FileWriter fr = new FileWriter(new File("specificityResults.csv"), false);
-        fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general, is-single-sense\n");
-        int runningTotalAcrossAllSensesOfWord = 0;
-        int totalNumSenses = 0;
-        for (POS p : POS.values()) {
-            IIndexWord idxWord = dict.getIndexWord(targetWord, p);
-            if (idxWord != null ) {
-                for (IWordID wordID: idxWord.getWordIDs()){
-                    String def = dict.getWord(wordID).getSynset().getGloss().split("\"")[0]; // exclude example sentences
-                    List<Integer> list = definitionToList(def, false).stream().map(frequencies::get).collect(toList());
-                    List<String> listWithoutStopwords = definitionToList(def, false).stream()
-                            .filter(Main::isNotStopword)
-                            .collect(toList());
-                    int averageWithStopwords = list.stream().reduce(0, Integer::sum)/list.size();
-                    int averageWithoutStopwords = listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size();
-                    String resultRow = targetWord + ", " + frequencies.get(targetWord) + ", " + averageWithoutStopwords + ", "
-                            + (averageWithoutStopwords > frequencies.get(targetWord)) + ", " + true;
-                    fr.write(resultRow + "\n");
-                    if (showPrintStatements){
-                        System.out.println("Original = " + frequencies.get(targetWord));
-                        System.out.println(def);
-                        System.out.println(list);
-                        System.out.println("Average including stopwords = " + averageWithStopwords);
-                        System.out.println("Average excluding stopwords = " + averageWithoutStopwords);
-                        System.out.println(resultRow);
+        if (!individualQuery){
+            fr.write("parent-word, parent-word-frequency, average-frequency-of-all-definitions, definition-is-more-general, is-single-sense\n");
+        }
+        for (String currentWord: wordList){
+            int runningTotalAcrossAllSensesOfWord = 0;
+            int totalNumValidSenses = 0;  // 'valid' meaning that a sense's definitions includes some non-stopword words
+            for (POS p : POS.values()) {
+                IIndexWord idxWord = dict.getIndexWord(currentWord, p);
+                if (idxWord != null ) {
+                    for (IWordID wordID: idxWord.getWordIDs()){
+                        String def = dict.getWord(wordID).getSynset().getGloss();
+                        List<Integer> list = definitionToList(def, true).stream().map(frequencies::get).collect(toList());
+                        List<String> listWithoutStopwords = definitionToList(def, false).stream()
+                                .filter(Main::isNotStopword)
+                                .collect(toList());
+                        int averageWithStopwords = list.stream().reduce(0, Integer::sum)/list.size();
+                        if (listWithoutStopwords.size() > 0){
+                            int averageWithoutStopwords = listWithoutStopwords.stream().map(frequencies::get).reduce(0, Integer::sum)/listWithoutStopwords.size();
+                            String resultRow = currentWord + ", " + frequencies.get(currentWord) + ", " + averageWithoutStopwords + ", "
+                                    + (averageWithoutStopwords > frequencies.get(currentWord)) + ", " + true;
+                            if (!individualQuery){
+                                fr.write(resultRow + "\n");
+                            }
+                            if (showPrintStatements){
+                                System.out.println("Frequency of query word = " + frequencies.get(currentWord));
+                                System.out.println(def);
+                                System.out.println(list);
+                                System.out.println("Average frequency of definition words (including stopwords) = " + averageWithStopwords);
+                                System.out.println("Average frequency of definition words (excluding stopwords) = " + averageWithoutStopwords);
+                                System.out.println(resultRow + "\n");
+                            }
+                            runningTotalAcrossAllSensesOfWord += averageWithoutStopwords;
+                            totalNumValidSenses++;
+                        }
+                        
                     }
-                    runningTotalAcrossAllSensesOfWord += averageWithoutStopwords;
-                    totalNumSenses++;
+                }
+            }
+            if (totalNumValidSenses > 0){
+                int averageAcrossAllSensesOfWord =  runningTotalAcrossAllSensesOfWord/totalNumValidSenses;
+                String resultRow = currentWord + ", " + frequencies.get(currentWord) + ", " + averageAcrossAllSensesOfWord + ", "
+                        + (averageAcrossAllSensesOfWord > frequencies.get(currentWord)) + ", " + false;
+                System.out.println(resultRow);
+                if (!individualQuery){
+                    fr.write(resultRow + "\n");
                 }
             }
         }
-        int averageAcrossAllSensesOfWord =  runningTotalAcrossAllSensesOfWord/totalNumSenses;
-        String resultRow = targetWord + ", " + frequencies.get(targetWord) + ", " + averageAcrossAllSensesOfWord + ", "
-                + (averageAcrossAllSensesOfWord > frequencies.get(targetWord)) + ", " + false;
-        System.out.println(resultRow);
-        fr.write(resultRow + "\n");
-
         fr.close();
     }
 
@@ -211,7 +237,7 @@ public class Main {
     }
 
     private static boolean isNotStopword(String lemma){
-        return statusInWordNet(lemma, false).equals("valid") || statusInWordNet(lemma, false).equals("valid (but stemmed)");
+        return !statusInWordNet(lemma, false).equals("valid (but stopword)") && !statusInWordNet(lemma, false).equals("valid (but stopword and stemmed)");
     }
 
     private static void findCycles() {
