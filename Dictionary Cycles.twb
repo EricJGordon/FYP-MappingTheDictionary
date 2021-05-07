@@ -1,0 +1,594 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20204.21.0114.0916                               -->
+<workbook original-version='18.1' source-build='2020.4.1 (20204.21.0114.0916)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <_.fcp.MarkAnimation.true...MarkAnimation />
+    <_.fcp.ObjectModelEncapsulateLegacy.true...ObjectModelEncapsulateLegacy />
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
+    <SheetIdentifierTracking />
+    <SortTagCleanup />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource caption='cycleResults' inline='true' name='federated.0bde4rb04n5yhp10oqyna0q7mfu7' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='cycleResults' name='textscan.1jxwv4t0e4yspv1eucb751w8z3rt'>
+            <connection class='textscan' directory='C:/Users/Eric/Documents/All UCD/Fourth Year/FYP/final-year-project-mapping-the-dictionary' filename='cycleResults.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <_.fcp.ObjectModelEncapsulateLegacy.false...relation connection='textscan.1jxwv4t0e4yspv1eucb751w8z3rt' name='cycleResults.csv' table='[cycleResults#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_IE' separator=','>
+            <column datatype='string' name='words' ordinal='0' />
+            <column datatype='boolean' name='multiword' ordinal='1' />
+            <column datatype='boolean' name='capitalised' ordinal='2' />
+            <column datatype='integer' name='2-cycles' ordinal='3' />
+            <column datatype='integer' name='3-cycles' ordinal='4' />
+          </columns>
+        </_.fcp.ObjectModelEncapsulateLegacy.false...relation>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...relation connection='textscan.1jxwv4t0e4yspv1eucb751w8z3rt' name='cycleResults.csv' table='[cycleResults#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_IE' separator=','>
+            <column datatype='string' name='words' ordinal='0' />
+            <column datatype='boolean' name='multiword' ordinal='1' />
+            <column datatype='boolean' name='capitalised' ordinal='2' />
+            <column datatype='integer' name='2-cycles' ordinal='3' />
+            <column datatype='integer' name='3-cycles' ordinal='4' />
+          </columns>
+        </_.fcp.ObjectModelEncapsulateLegacy.true...relation>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_GB&quot;</attribute>
+              <attribute datatype='string' name='currency'>&quot;€&quot;</attribute>
+              <attribute datatype='string' name='debit-close-char'>&quot;&quot;</attribute>
+              <attribute datatype='string' name='debit-open-char'>&quot;&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_IE&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>words</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[words]</local-name>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias>words</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>multiword</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[multiword]</local-name>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias>multiword</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>capitalised</remote-name>
+            <remote-type>11</remote-type>
+            <local-name>[capitalised]</local-name>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias>capitalised</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>boolean</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>2-cycles</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[2-cycles]</local-name>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias>2-cycles</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>3-cycles</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[3-cycles]</local-name>
+            <parent-name>[cycleResults.csv]</parent-name>
+            <remote-alias>3-cycles</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='2-Cycles' datatype='integer' name='[2-cycles]' role='measure' type='quantitative' />
+      <column caption='3-Cycles' datatype='integer' name='[3-cycles]' role='measure' type='quantitative' />
+      <_.fcp.ObjectModelTableType.true...column caption='cycleResults.csv' datatype='table' name='[__tableau_internal_object_id__].[cycleResults.csv_B1A966FBC1A94468821BA71372E561DA]' role='measure' type='quantitative' />
+      <column caption='Capitalised' datatype='boolean' name='[capitalised]' role='dimension' type='nominal' />
+      <column caption='Multiword' datatype='boolean' name='[multiword]' role='dimension' type='nominal' />
+      <column caption='Words' datatype='string' name='[words]' role='dimension' type='nominal' />
+      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' dim-ordering='alphabetic' measure-ordering='alphabetic' show-structure='true' />
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;Ireland&quot;' />
+      </semantic-values>
+      <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+        <objects>
+          <object caption='cycleResults.csv' id='cycleResults.csv_B1A966FBC1A94468821BA71372E561DA'>
+            <properties context=''>
+              <relation connection='textscan.1jxwv4t0e4yspv1eucb751w8z3rt' name='cycleResults.csv' table='[cycleResults#csv]' type='table'>
+                <columns character-set='UTF-8' header='yes' locale='en_IE' separator=','>
+                  <column datatype='string' name='words' ordinal='0' />
+                  <column datatype='boolean' name='multiword' ordinal='1' />
+                  <column datatype='boolean' name='capitalised' ordinal='2' />
+                  <column datatype='integer' name='2-cycles' ordinal='3' />
+                  <column datatype='integer' name='3-cycles' ordinal='4' />
+                </columns>
+              </relation>
+            </properties>
+          </object>
+        </objects>
+      </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Average Number of Cycles per Word'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='cycleResults' name='federated.0bde4rb04n5yhp10oqyna0q7mfu7' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0bde4rb04n5yhp10oqyna0q7mfu7'>
+            <column caption='2-Cycles' datatype='integer' name='[2-cycles]' role='measure' type='quantitative' />
+            <column caption='3-Cycles' datatype='integer' name='[3-cycles]' role='measure' type='quantitative' />
+            <column-instance column='[2-cycles]' derivation='Avg' name='[avg:2-cycles:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[3-cycles]' derivation='Avg' name='[avg:3-cycles:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[2-cycles]' derivation='Median' name='[med:2-cycles:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[3-cycles]' derivation='Sum' name='[sum:3-cycles:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[avg:2-cycles:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[avg:3-cycles:qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <manual-sort column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[med:2-cycles:qk]&quot;</bucket>
+              <bucket>&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[sum:3-cycles:qk]&quot;</bucket>
+            </dictionary>
+          </manual-sort>
+          <slices>
+            <column>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='width' field='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]' value='98' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <style>
+              <style-rule element='pane'>
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[Multiple Values]</rows>
+        <cols>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</cols>
+      </table>
+      <simple-id uuid='{F1F9C4BE-9F6A-428C-BF1C-C4A145BFB922}' />
+    </worksheet>
+    <worksheet name='Average Number of Cycles per Word (excluding capitalised and multi-part words)'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='cycleResults' name='federated.0bde4rb04n5yhp10oqyna0q7mfu7' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0bde4rb04n5yhp10oqyna0q7mfu7'>
+            <column caption='2-Cycles' datatype='integer' name='[2-cycles]' role='measure' type='quantitative' />
+            <column caption='3-Cycles' datatype='integer' name='[3-cycles]' role='measure' type='quantitative' />
+            <column-instance column='[2-cycles]' derivation='Avg' name='[avg:2-cycles:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[3-cycles]' derivation='Avg' name='[avg:3-cycles:qk]' pivot='key' type='quantitative' />
+            <column caption='Capitalised' datatype='boolean' name='[capitalised]' role='dimension' type='nominal' />
+            <column-instance column='[2-cycles]' derivation='Median' name='[med:2-cycles:qk]' pivot='key' type='quantitative' />
+            <column caption='Multiword' datatype='boolean' name='[multiword]' role='dimension' type='nominal' />
+            <column-instance column='[capitalised]' derivation='None' name='[none:capitalised:nk]' pivot='key' type='nominal' />
+            <column-instance column='[multiword]' derivation='None' name='[none:multiword:nk]' pivot='key' type='nominal' />
+            <column-instance column='[3-cycles]' derivation='Sum' name='[sum:3-cycles:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[avg:2-cycles:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[avg:3-cycles:qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <manual-sort column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[med:2-cycles:qk]&quot;</bucket>
+              <bucket>&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[sum:3-cycles:qk]&quot;</bucket>
+            </dictionary>
+          </manual-sort>
+          <filter class='categorical' column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:capitalised:nk]'>
+            <groupfilter function='member' level='[none:capitalised:nk]' member='false' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+          </filter>
+          <filter class='categorical' column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:multiword:nk]'>
+            <groupfilter function='member' level='[none:multiword:nk]' member='false' user:ui-domain='relevant' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
+          </filter>
+          <slices>
+            <column>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</column>
+            <column>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:multiword:nk]</column>
+            <column>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:capitalised:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='width' field='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]' value='98' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <style>
+              <style-rule element='pane'>
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[Multiple Values]</rows>
+        <cols>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</cols>
+      </table>
+      <simple-id uuid='{57060655-B02A-4DE1-9F41-E88E89EB5A1F}' />
+    </worksheet>
+    <worksheet name='Total Number of Cycles'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='cycleResults' name='federated.0bde4rb04n5yhp10oqyna0q7mfu7' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0bde4rb04n5yhp10oqyna0q7mfu7'>
+            <column caption='2-Cycles' datatype='integer' name='[2-cycles]' role='measure' type='quantitative' />
+            <column caption='3-Cycles' datatype='integer' name='[3-cycles]' role='measure' type='quantitative' />
+            <column-instance column='[2-cycles]' derivation='Sum' name='[sum:2-cycles:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[3-cycles]' derivation='Sum' name='[sum:3-cycles:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[sum:2-cycles:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[sum:3-cycles:qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <slices>
+            <column>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[Multiple Values]</rows>
+        <cols>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[:Measure Names]</cols>
+      </table>
+      <simple-id uuid='{48862B48-3625-44F8-B1EF-8D32670E80E9}' />
+    </worksheet>
+  </worksheets>
+  <windows saved-dpi-scale-factor='1.25' source-height='37'>
+    <window class='worksheet' name='Total Number of Cycles'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:words:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{B57944ED-DFB3-4802-A85F-060F7928E164}' />
+    </window>
+    <window class='worksheet' maximized='true' name='Average Number of Cycles per Word'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:words:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{1462F4D2-F5EA-47B1-966D-13D37E986F8B}' />
+    </window>
+    <window class='worksheet' name='Average Number of Cycles per Word (excluding capitalised and multi-part words)'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:capitalised:nk]</field>
+            <field>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:multiword:nk]</field>
+            <field>[federated.0bde4rb04n5yhp10oqyna0q7mfu7].[none:words:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{FDB1FE35-207D-456D-A566-8B9E9FA66C9B}' />
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Average Number of Cycles per Word' width='192'>
+      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
+      Me1/Ex4D3s+7sI4AAAAASUVORK5CYII=
+    </thumbnail>
+    <thumbnail height='192' name='Average Number of Cycles per Word (excluding capitalised and multi-part words)' width='192'>
+      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
+    </thumbnail>
+    <thumbnail height='192' name='Total Number of Cycles' width='192'>
+      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
+    </thumbnail>
+  </thumbnails>
+</workbook>
